@@ -9,7 +9,7 @@ import javax.servlet.http.HttpServlet;
 
 
 //@WebServlet(name="systemInitServlet")  
-@WebServlet(value="/servlet/init-param", initParams={@WebInitParam(name="param1", value="value1")})  
+@WebServlet(value="/servlet/init-param", loadOnStartup=1, initParams={@WebInitParam(name="param1", value="value1")})  
 public class SystemInitServlet extends HttpServlet{
 	/**
 	 * 

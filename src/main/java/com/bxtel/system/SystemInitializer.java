@@ -12,6 +12,7 @@ import org.springframework.web.WebApplicationInitializer;
 
 @Order(2)  
 public class SystemInitializer implements WebApplicationInitializer{
+	
 	@Override
 	public void onStartup(ServletContext servletContext) throws ServletException {
 		System.out.println("aaaaaaaa:"+servletContext);

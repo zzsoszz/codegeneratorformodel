@@ -1,6 +1,7 @@
 package com.bxtel;
 import org.springframework.boot.web.servlet.ServletComponentScan;
 
+
 import org.springframework.boot.SpringApplication;
 
 
@@ -34,7 +35,9 @@ import org.springframework.stereotype.Repository;
 //@EnableJpaRepositories(basePackages = "com/bxtel/dao")
 @EnableJpaRepositories(basePackages = "com/bxtel",includeFilters={@ComponentScan.Filter(type=FilterType.ANNOTATION, value=Repository.class)})
 public class HellobootApplication extends SpringBootServletInitializer{
-	ServletComponentScan ss;
+	//ServletComponentScan ss;
+	
+	
 	@Override
 	protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
 		return application.sources(HellobootApplication.class);
