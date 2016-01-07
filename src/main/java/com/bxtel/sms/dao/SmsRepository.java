@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
 import com.bxtel.sms.model.Sms;
 /*
  * 一步步学习 Spring Data 系列
@@ -14,6 +15,7 @@ import com.bxtel.sms.model.Sms;
  * 
  * 以找到针对JpaRepository和JpaSpecificationExecutor有一个实现类，SimpleJpaRepository.class，这个类实现了刚才所提的两个接口
  */
+@Repository
 public interface SmsRepository extends PagingAndSortingRepository<Sms, Long>,JpaSpecificationExecutor<Sms> {
 	
 }

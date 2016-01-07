@@ -1,50 +1,65 @@
-//package com.bxtel.sms.controller;
-//import com.bxtel.sms.bo.*;
-//
-//import com.bxtel.sms.model.*;
-//
-//import com.bxtel.exception.BusinessException;
-//import com.bxtel.exception.DAOException;
-//import dinamica.util.ListAndTotalCount;
-//import java.util.*;
-//import javax.annotation.Resource;
-//import org.springframework.beans.factory.annotation.*;
-//import org.springframework.stereotype.*;
-//import javax.servlet.http.HttpServletRequest;
-//import javax.servlet.http.HttpServletResponse;
-//import org.springframework.stereotype.Controller;
-//import org.springframework.web.bind.annotation.RequestMapping;
-//import org.springframework.web.servlet.ModelAndView;
-//import org.springframework.web.servlet.mvc.multiaction.MultiActionController;
-//import org.apache.commons.logging.Log;
-//import org.apache.commons.logging.LogFactory;
-//import org.springframework.web.servlet.view.jxls.JxlsExcelView;
-//import au.com.bytecode.opencsv.CSVWriter;
-//import dinamica.util.DateHelper;
-//import com.bxtel.common.ObjectToCell;
-//import com.bxtel.common.Page;
-//import org.springframework.web.bind.annotation.ResponseBody;
-//
-//
-////com/bxtel/sms/showadd.do
-////com/bxtel/sms/showdetail.do
-////com/bxtel/sms/showedit.do
-////com/bxtel/sms/showsearch.do
-////com/bxtel/sms/showpagelist.do
-////com/bxtel/sms/showlist.do
-////com/bxtel/sms/doadd.do
-////com/bxtel/sms/doupdate.do
-////com/bxtel/sms/dodelete.do
-//
-//
-//@Controller
-//public class SmsController extends MultiActionController {
-//	    
-//    @Resource
-//	public SmsBO  bo;
-//    
-//    private static final Log logger = LogFactory.getLog(SmsController.class);
-//    
+package com.bxtel.sms.controller;
+import com.bxtel.sms.bo.*;
+
+import com.bxtel.sms.model.*;
+import com.bxtel.commons.Request;
+import com.bxtel.exception.BusinessException;
+import com.bxtel.exception.DAOException;
+import java.util.*;
+import javax.annotation.Resource;
+import org.springframework.beans.factory.annotation.*;
+import org.springframework.data.domain.Page;
+import org.springframework.stereotype.*;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.multiaction.MultiActionController;
+import org.springside.modules.web.Servlets;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+
+//com/bxtel/sms/showadd.do
+//com/bxtel/sms/showdetail.do
+//com/bxtel/sms/showedit.do
+//com/bxtel/sms/showsearch.do
+//com/bxtel/sms/showpagelist.do
+//com/bxtel/sms/showlist.do
+//com/bxtel/sms/doadd.do
+//com/bxtel/sms/doupdate.do
+//com/bxtel/sms/dodelete.do
+
+
+@Controller
+@RequestMapping(value = "/sms")
+public class SmsController extends MultiActionController {
+	
+	@Autowired
+	public SmsBO  bo;
+    
+    private static final Log logger = LogFactory.getLog(SmsController.class);
+    /*
+     * search_LIKE_title
+     * sort_DESC_title
+     */
+    @RequestMapping(value = "search")
+    @ResponseBody
+    public Page<Sms> search(Integer page,Integer pagesize,HttpServletRequest request, HttpServletResponse response)  throws Exception, BusinessException {
+    	Map<String, Object> search = Servlets.getParametersStartingWith(request, "search_");
+    	Map<String, Object> sort = Servlets.getParametersStartingWith(request, "sort_");
+    	return bo.search(search,sort,page,pagesize);
+	}
+    
+    @RequestMapping(value = "searchforjson")
+    @ResponseBody
+    public Page<Sms> searchforjson(@RequestBody Request req)  throws Exception, BusinessException {
+    	return bo.search(req.getData().getSearch(),req.getData().getSort(),req.getData().getPage(),req.getData().getPagesize());
+	}
+    
 //    
 //    @RequestMapping
 //    public ModelAndView showadd(Sms model,HttpServletRequest request, 
@@ -212,6 +227,6 @@
 //		}
 //        return mav;
 //    }
-//    
-//    
-//}
+    
+    
+}

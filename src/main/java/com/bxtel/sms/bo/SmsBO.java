@@ -1,46 +1,64 @@
 package com.bxtel.sms.bo;
 import com.bxtel.sms.model.*;
-import com.bxtel.sms.dao.*;
 
+
+import com.bxtel.sms.dao.*;
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.*;
+import org.springside.modules.persistence.DynamicSpecifications;
+import org.springside.modules.persistence.SearchFilter;
+import org.springside.modules.persistence.SortParse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import javax.annotation.Resource;
-import javax.persistence.criteria.*;
+import java.util.List;
+import java.util.Map;
 
 @Service("SmsBO")
 public class SmsBO 
 {
-	@Resource
-	public SmsRepository dao;
+	
+	@Autowired
+	public SmsRepository smsRepository;
 	
 	private static final Log logger = LogFactory.getLog(SmsBO.class);
 	
 	public Sms add(Sms model){
-			return dao.save(model);
+			return smsRepository.save(model);
 	}
 	
 	public void delete(Sms model){
-			dao.delete(model);
+			smsRepository.delete(model);
 	}
 	
-	public Page<Sms> findAll(String key)
+	public List<Sms> search(Map<String, Object> searchParams,Map<String, Object> sortParams)
 	{
-		return dao.findAll(new Specification<Sms>(){
-            @Override
-            public Predicate toPredicate(Root<Sms> root, CriteriaQuery<?> query, CriteriaBuilder cb) {  
-                root = query.from(Sms.class);  
-                Path<String> nameExp = root.get("content");  
-                return cb.like(nameExp, "%"+key+"%");  
-            }
-        }, new PageRequest(1, 5, new Sort(Direction.DESC, new String[] { "status" })));
+		Map<String, SearchFilter> filters = SearchFilter.parse(searchParams);
+		Specification<Sms> spec = DynamicSpecifications.bySearchFilter(filters.values(), Sms.class);
+		Sort sort=SortParse.parse(sortParams);
+		List<Sms> list = smsRepository.findAll(spec,sort);
+		return list;
+	}
+	
+	
+	public Page<Sms> search(Map<String, Object> searchParams,Map<String, Object> sortParams,Integer page,Integer pagesize)
+	{
+		Map<String, SearchFilter> filters = SearchFilter.parse(searchParams);
+		Specification<Sms> spec = DynamicSpecifications.bySearchFilter(filters.values(), Sms.class);
+		Sort sort=SortParse.parse(sortParams);
+		PageRequest pageRequest=null;
+		if(sort!=null)
+		{
+			pageRequest=new PageRequest(page,pagesize,sort);
+		}else{
+			pageRequest=new PageRequest(page,pagesize);
+		}
+		Page<Sms> p = smsRepository.findAll(spec,pageRequest);
+		return p;
 	}
 	
 }
