@@ -1,27 +1,25 @@
 package com.bxtel.sms.controller;
 import com.bxtel.sms.bo.*;
 
+
 import com.bxtel.sms.model.*;
 import com.bxtel.commons.Request;
+import com.bxtel.commons.Response;
+import com.bxtel.commons.SearchData;
 import com.bxtel.exception.BusinessException;
-import com.bxtel.exception.DAOException;
 import java.util.*;
-import javax.annotation.Resource;
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.data.domain.Page;
-import org.springframework.stereotype.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.multiaction.MultiActionController;
 import org.springside.modules.web.Servlets;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 
 //com/bxtel/sms/showadd.do
 //com/bxtel/sms/showdetail.do
@@ -33,7 +31,6 @@ import org.apache.commons.logging.LogFactory;
 //com/bxtel/sms/doupdate.do
 //com/bxtel/sms/dodelete.do
 
-
 @Controller
 @RequestMapping(value = "/sms")
 public class SmsController extends MultiActionController {
@@ -42,6 +39,7 @@ public class SmsController extends MultiActionController {
 	public SmsBO  bo;
     
     private static final Log logger = LogFactory.getLog(SmsController.class);
+    
     /*
      * search_LIKE_title
      * sort_DESC_title
@@ -56,9 +54,20 @@ public class SmsController extends MultiActionController {
     
     @RequestMapping(value = "searchforjson")
     @ResponseBody
-    public Page<Sms> searchforjson(@RequestBody Request req)  throws Exception, BusinessException {
-    	return bo.search(req.getData().getSearch(),req.getData().getSort(),req.getData().getPage(),req.getData().getPagesize());
+    public Response<Page<Sms>> searchforjson(@RequestBody Request<SearchData> req)  throws Exception, BusinessException {
+    	Response<Page<Sms>> resp=new Response<Page<Sms>>();
+    	try
+    	{
+    		Page<Sms> page = bo.search(req.getData().getSearch(),req.getData().getSort(),req.getData().getPage(),req.getData().getPagesize());
+        	resp.setData(page);
+    	}catch(Exception ex)
+		{
+			resp.setReturncode("00000001");
+			resp.setReturnmsg("系统异常!");
+		}
+    	return resp;
 	}
+    
     
 //    
 //    @RequestMapping

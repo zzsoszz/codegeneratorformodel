@@ -4,7 +4,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
-public class Request {
+public class Request<T> {
 	@NotNull
 	String imsi;
 	
@@ -17,7 +17,7 @@ public class Request {
 	
 	@Valid
 	@NotNull
-	RequestData data;
+	T data;
 	
 	public String getImsi() {
 		return imsi;
@@ -43,11 +43,11 @@ public class Request {
 		this.version = version;
 	}
 
-	public RequestData getData() {
+	public T getData() {
 		return data;
 	}
 
-	public void setData(RequestData data) {
+	public void setData(T data) {
 		this.data = data;
 	}
 }

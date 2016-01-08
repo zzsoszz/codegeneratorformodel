@@ -2,6 +2,7 @@ package com.bxtel;
 
 import java.util.concurrent.TimeUnit;
 
+
 import javax.sql.DataSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.embedded.EmbeddedServletContainerFactory;
@@ -19,8 +20,6 @@ import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.interceptor.TransactionInterceptor;
 import org.springframework.web.servlet.DispatcherServlet;
-
-import com.bxtel.system.SystemInitServlet;
 
 @Configuration
 public class HellobootConfiguration {
@@ -46,10 +45,10 @@ public class HellobootConfiguration {
 //	    return registration;
 //	  }
 	 
-	  @Bean
-	  public ServletRegistrationBean servletRegistrationBean() {
-	    return new ServletRegistrationBean(new SystemInitServlet(), "/signin");
-	  }
+//	  @Bean
+//	  public ServletRegistrationBean servletRegistrationBean() {
+//	    return new ServletRegistrationBean(new SystemInitServlet(), "/signin");
+//	  }
 	 
 	  private void printStacks() {
 		StackTraceElement[] elements = Thread.currentThread().getStackTrace();

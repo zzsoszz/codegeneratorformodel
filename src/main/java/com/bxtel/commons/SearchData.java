@@ -2,23 +2,11 @@ package com.bxtel.commons;
 
 import java.util.Map;
 
-public class RequestData {
-	Integer page;
-	Integer pagesize;
+public class SearchData {
 	Map<String, Object> search;
 	Map<String, Object> sort;
-	public Integer getPage() {
-		return page;
-	}
-	public void setPage(Integer page) {
-		this.page = page;
-	}
-	public Integer getPagesize() {
-		return pagesize;
-	}
-	public void setPagesize(Integer pagesize) {
-		this.pagesize = pagesize;
-	}
+	Integer page;
+	Integer pagesize;
 	public Map<String, Object> getSearch() {
 		return search;
 	}
@@ -30,5 +18,17 @@ public class RequestData {
 	}
 	public void setSort(Map<String, Object> sort) {
 		this.sort = sort;
+	}
+	public Integer getPage() {
+		return page;
+	}
+	public void setPage(Integer page) {
+		this.page = page;
+	}
+	public Integer getPagesize() {
+		return pagesize;
+	}
+	public void setPagesize(Integer pagesize) {
+		this.pagesize = pagesize;
 	}
 }

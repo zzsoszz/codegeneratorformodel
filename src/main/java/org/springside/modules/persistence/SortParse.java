@@ -10,6 +10,10 @@ import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.domain.Sort.Order;
 public class SortParse {
 	public static Sort parse(Map<String, Object> sortParams) {
+		if(sortParams==null)
+		{
+			return null;
+		}
 		List<Order> orders=new ArrayList<Order>();
 		for (Entry<String, Object> entry : sortParams.entrySet()) {
 			// 过滤掉空值
