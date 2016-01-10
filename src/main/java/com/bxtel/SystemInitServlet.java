@@ -1,4 +1,4 @@
-package com.bxtel.system;
+package com.bxtel;
 
 import java.util.Enumeration;
 
@@ -66,6 +66,7 @@ public class SystemInitServlet extends HttpServlet{
 		data.setSearch(search);
 		req.setData(data);
 		try {
+			System.out.println(sms.searchforjson(req));
 			System.out.println(sms.searchforjson(req));
 		} catch (Exception e) {
 			// TODO Auto-generated catch block

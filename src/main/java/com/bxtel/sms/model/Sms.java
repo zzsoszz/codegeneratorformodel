@@ -12,7 +12,7 @@ import dinamica.generator.Model;
 
 @Model
 @Entity
-@Table(name = "sms")
+//@Table(name="sms")
 public class Sms {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)

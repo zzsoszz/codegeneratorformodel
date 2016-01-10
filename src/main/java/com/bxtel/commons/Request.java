@@ -1,5 +1,4 @@
 package com.bxtel.commons;
-
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
@@ -18,6 +17,7 @@ public class Request<T> {
 	@Valid
 	@NotNull
 	T data;
+	
 	
 	public String getImsi() {
 		return imsi;

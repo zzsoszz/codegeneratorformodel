@@ -1,0 +1,1168 @@
+﻿<beans xmlns="http://www.springframework.org/schema/beans" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:security="http://www.springframework.org/schema/security"
+	xmlns:util="http://www.springframework.org/schema/util" 
+	xmlns:p="http://www.springframework.org/schema/p" 
+	xmlns:tx="http://www.springframework.org/schema/tx" 
+	xmlns:mvc="http://www.springframework.org/schema/mvc" 
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:ehcache="http://ehcache-spring-annotations.googlecode.com/svn/schema/ehcache-spring"
+	xmlns:task="http://www.springframework.org/schema/task"
+	xmlns:cache="http://www.springframework.org/schema/cache" 
+	xsi:schemaLocation=" 
+	http://www.springframework.org/schema/beans 
+	http://www.springframework.org/schema/beans/spring-beans-3.1.xsd 
+	http://www.springframework.org/schema/tx 
+	http://www.springframework.org/schema/tx/spring-tx-3.1.xsd
+	http://www.springframework.org/schema/mvc
+	http://www.springframework.org/schema/mvc/spring-mvc-3.1.xsd
+	http://www.springframework.org/schema/context   
+    http://www.springframework.org/schema/context/spring-context-3.1.xsd
+    http://www.springframework.org/schema/aop 
+    http://www.springframework.org/schema/aop/spring-aop-3.1.xsd
+    http://www.springframework.org/schema/security
+    http://www.springframework.org/schema/security/spring-security-3.1.xsd 
+    http://www.springframework.org/schema/util 
+    http://www.springframework.org/schema/util/spring-util-3.1.xsd
+    http://ehcache-spring-annotations.googlecode.com/svn/schema/ehcache-spring 
+    http://ehcache-spring-annotations.googlecode.com/svn/schema/ehcache-spring/ehcache-spring-1.1.xsd
+    http://www.springframework.org/schema/task 
+    http://www.springframework.org/schema/task/spring-task-3.1.xsd
+    http://www.springframework.org/schema/cache 
+    http://www.springframework.org/schema/cache/spring-cache.xsd
+	">
+	
+  	
+	<bean id="filterChainProxy2" class="org.springframework.security.web.FilterChainProxy">
+		  <security:filter-chain-map path-type="ant">
+		  	 <security:filter-chain pattern="/js/**" filters="none" />
+		  	 <security:filter-chain pattern="/css/**" filters="none" />
+		  	 <security:filter-chain pattern="/images/**" filters="none" />
+		  	 <!-- 
+		  	 <security:filter-chain pattern="/com/bxtel/bxorderhotelinter/controller/**" filters="myrememebermeFilter,myLoginFilter,myLogoutFilter,myExceptionTranslationFilter,filterSecurityInterceptor" />
+		  	  -->
+		  	 <security:filter-chain pattern="/**/*.jsp" filters="none" />
+		  	 <!-- 
+		  	 <security:filter-chain pattern="/**/*.jsp" filters="saveUrlInterceptor" />
+		  	 httpLogInterceptor,
+		  	  -->
+		  	 <security:filter-chain pattern="/**" filters="deviceResolverRequestFilter,myrememebermeFilter,myLoginFilter,myLogoutFilter,myExceptionTranslationFilter,filterSecurityInterceptor" />
+		  </security:filter-chain-map>
+	</bean>
+	
+	
+	<!-- session  
+	http://sishuok.com/forum/blogPost/list/4307.html
+	D:\bxdev\trunck\website\portal\opensource_spring\org\springframework\security\config\http\HttpConfigurationBuilder.java
+	org.springframework.security.web.session.SessionManagementFilter
+	ConcurrentSessionFilter
+	ConcurrentSessionControlStrategy
+	org.springframework.security.web.session.HttpSessionEventPublisher
+	org.springframework.security.core.session.SessionRegistryImpl
+	<bean id="securityContextRepository" class="org.springframework.security.web.context.HttpSessionSecurityContextRepository" />     SecurityContextRepository
+	<bean id="securityContextPersistenceFilter" class="org.springframework.security.web.context.SecurityContextPersistenceFilter">   
+        <property name="securityContextRepository" ref="securityContextRepository"/>   
+    </bean>   
+    HttpRequestResponseHolder
+    ThreadLocalSecurityContextHolderStrategy
+    org.springframework.security.web.context.SecurityContextPersistenceFilter 
+    SecurityContextImpl
+    RequestContextListener  HttpServletRequest request =  ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
+	 -->
+	
+	
+	<bean  id="mychannelProcessingFilter" class="org.springframework.security.web.access.channel.ChannelProcessingFilter">
+		<property name="channelDecisionManager">
+			<ref local="channelDecisionManager" />
+		</property>
+		<!-- ChannelProcessingFilter   -->
+		<property name="securityMetadataSource">
+	    	<security:filter-security-metadata-source path-type="ant">
+		    	<!-- regex
+		      	<security:intercept-url pattern="\A/secure/.*\Z" access="REQUIRES_SECURE_CHANNEL"/>
+		      	<security:intercept-url pattern="\A/login.jsp.*\Z" access="REQUIRES_SECURE_CHANNEL"/>
+		      	<security:intercept-url pattern="\A/.*\Z" access="ANY_CHANNEL"/>
+		      	REQUIRES_INSECURE_CHANNEL   非安全通道  http
+		      	REQUIRES_SECURE_CHANNEL  安全通道 https
+		      	ANY_CHANNEL   任意,不做强制限定
+		    	 -->
+		    	 <security:intercept-url pattern="/j_spring_security_check" access="REQUIRES_SECURE_CHANNEL"/>
+		    	 <security:intercept-url pattern="/com/bxtel/bxsystemuser/controller/**" access="REQUIRES_SECURE_CHANNEL"/>
+		    	 <security:intercept-url pattern="/com/bxtel/bxorderhotel/controller/**" access="REQUIRES_SECURE_CHANNEL"/>
+		    	 <security:intercept-url pattern="/action/**" access="REQUIRES_SECURE_CHANNEL"/>
+		    	 <security:intercept-url pattern="/**" access="REQUIRES_INSECURE_CHANNEL"/>
+	    	</security:filter-security-metadata-source>
+	  	</property>
+	</bean>
+	
+	
+	<bean  id="firstloginFilter" class="com.bxtel.security4.filter.FirstLoginFiilter">
+	</bean>
+	
+	<bean id="jacksonObjectMapper" class="org.codehaus.jackson.map.ObjectMapper" />
+	 <bean  class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+		 <property name="targetObject" ref="jacksonObjectMapper" />
+		 <property name="targetMethod" value="configure" />
+		 <property name="arguments">
+			  <list>
+			   <value type="org.codehaus.jackson.map.DeserializationConfig.Feature">FAIL_ON_UNKNOWN_PROPERTIES</value>
+			   <value>false</value>
+			  </list>
+	     </property>
+	</bean>
+     
+	
+	<bean  id="myrememebermeFilter" class="com.bxtel.security4.filter.RememberMeFiilter">
+		<property name="authenticationManager" ref="myProviderManager"/> 
+		<property name="requesturl" value="/j_spring_security_check"/> 
+    	<property name="successHandler" ref="simpleUrlAuthenticationSuccessHandler"/> 
+    	<property name="failureHandler" ref="simpleUrlAuthenticationFailureHandler"/> 
+	</bean>
+	
+	
+	<!--  登陆   -->
+    <bean id="myLoginFilter" class="com.bxtel.security4.filter.UsernamePasswordLoginFilter">
+    	<property name="authenticationManager" ref="myProviderManager"/> 
+    	<property name="requesturl" value="/j_spring_security_check"/> 
+    	<property name="successHandler" ref="simpleUrlAuthenticationSuccessHandler"/> 
+    	<property name="failureHandler" ref="simpleUrlAuthenticationFailureHandler"/> 
+    </bean>
+    <!-- portal-->
+    <bean id="simpleUrlAuthenticationFailureHandler" class="com.bxtel.security4.authentication.handler.portal.SimpleUrlAuthenticationFailureHandler">
+    	<property name="failurl" value="/com/bxtel/bxsystemuser/controller/bxsystemusert/showlogin.do?validated=false"/> 
+    </bean>
+    
+    <bean id="simpleUrlAuthenticationSuccessHandler" class="com.bxtel.security4.authentication.handler.portal.SimpleUrlAuthenticationSuccessHandler">
+  		<property name="successurl" value="/"/> 
+  		<property name="successurlforweixin" value="/weixin/html5/index.jsp"/> 
+  		<property name="successurlformobile" value="/html5/index.jsp"/> 
+    	<property name="backToPageBeforeLogin" value="true"/> 
+    </bean>
+    <bean id="loginAuthenticationProvider" class="com.bxtel.security4.authentication.provider.portal.LoginAuthenticationProvider">
+    </bean>
+	
+	
+    <!-- ehui
+    <bean id="simpleUrlAuthenticationFailureHandler" class="com.bxtel.security4.authentication.handler.ehui.SimpleUrlAuthenticationFailureHandler">
+   		<property name="failurl" value="/com/bxtel/bxsystemuser/controller/bxsystemusert/showlogin.do?validated=false"/> 
+    </bean>
+    <bean id="simpleUrlAuthenticationSuccessHandler" class="com.bxtel.security4.authentication.handler.ehui.SimpleUrlAuthenticationSuccessHandler">
+   		<property name="successurl" value="/"/> 
+    	<property name="backToPageBeforeLogin" value="false"/> 
+    </bean>
+    <bean id="loginAuthenticationProvider" class="com.bxtel.security4.authentication.provider.ehui.LoginAuthenticationProvider">
+    </bean>
+	  -->
+
+	 
+    <!-- X509AuthenticationFilter -->
+    
+	<!--  登出   -->
+	<bean id="myLogoutFilter" class="com.bxtel.security4.filter.LogoutFilter">
+    	<property name="requesturl" value="/j_spring_security_logout"/> 
+    	<property name="successurl" value="/"/> 
+    </bean>
+    
+    <bean id="deviceResolverRequestFilter" class="org.springframework.mobile.device.DeviceResolverRequestFilter">
+    </bean>
+    
+    
+    <!-- 保存认证失败时保存请求 -->
+	<bean  id="myExceptionTranslationFilter" class="com.bxtel.security4.filter.MyExceptionTranslationFilter">
+		<property name="entrypoint"       value="/com/bxtel/bxsystemuser/controller/bxsystemusert/showlogin.do"/> 
+		<property name="mobileentrypoint" value="/html5/login/login.jsp"/> 
+		<property name="weixinentrypoint" value="/com/bxtel/weixin/controller/weixin/redirectWeixin.do"/> 
+		<property name="accessDeniedHandler" ref="myAccessDeniedHandler"/> 
+	</bean>
+	
+	<bean id="myAccessDeniedHandler" class="com.bxtel.security4.access.exception.handler.MyAccessDeniedHandler">
+        <property name="errorPage" value="/com/bxtel/errors/error-noprivilege.jsp" />
+    </bean>
+    
+	
+	<bean id="httpLogInterceptor" class="com.bxtel.security4.filter.HttpLogInterceptor">
+    </bean>
+    
+    
+	<bean id="saveUrlInterceptor" class="com.bxtel.security4.filter.SaveUrlInterceptor">
+		 <property name="urlPatternSource">
+				<util:map map-class="java.util.HashMap">
+					<entry key="/com/bxtel/ordersDetails/xiaoms/**" value="ant" />
+					<entry key="/com/bxtel/ordersDetails/order/**" value="ant" />
+					<entry key="/com/bxtel/flight/controller/flight/**" value="ant" />
+					<entry key="/com/bxtel/hotel/controller/hotel/**" value="ant" />
+					<entry key="/com/bxtel/shopping/controller/shopping/**" value="ant" />
+				</util:map>
+		 </property>
+    </bean>
+    
+    
+    <!--  检查用户是否登陆   -->
+    <bean id="filterSecurityInterceptor" class="com.bxtel.security4.filter.FilterSecurityInterceptor">
+    	 <!-- SR(安全资源)  or ALl<所有资源>    -->
+    	 <property name="protectStrategy"   value="SR" />
+    	 <property name="checkRole"   value="false" />
+		 <property name="securityMetadataSource" ref="filterInvocationSecurityMetadataSource" />
+		 <!-- 
+		 <property name="unSecurityMetadataSource">
+				<util:map map-class="java.util.HashMap">
+					<entry key="/js/**" value="ant" />
+					<entry key="/css/**" value="ant" />
+					<entry key="/images/**" value="ant" />
+					<entry key="/cc/**" value="ant" />
+					<entry key="/com/bxtel/bxsystemuser/controller/**" value="ant" />
+					<entry key="/j_spring_security_check" value="ant" />
+					<entry key="/j_spring_security_logout" value="ant" />
+					<entry key="/com/bxtel/captcha/**" value="ant" />
+					<entry key="/com/bxtel/hotel/controller/**" value="ant" />
+					<entry key="/com/bxtel/errors/**" value="ant" />
+					<entry key="/com/bxtel/helpcenter/**" value="" />
+					<entry key="/com/bxtel/restaurantorder/controller/**" value="" />
+					<entry key="/com/bxtel/orderdetails/**" value="" />
+					<entry key="/**/*.json" value="ant" />
+					<entry key="/**/*.jsp" value="ant" />
+					<entry key="/html5/**" value="ant" />
+					<entry key="/com/bxtel/flight/controller/**" value="ant" />
+				</util:map>
+		 </property>
+		  -->
+    </bean>
+	
+	<!-- 
+		47.1. AntPathRequestMatcher
+	我们默认使用的URL匹配器就是这个AntPathRequestMatcher，它来自于http://ant.apache.org/项目，是一种简单易懂的路径匹配策略。
+	它为我们提供了三种通配符。
+	通配符：?
+	示例：/admin/g?t.jsp
+	匹配任意一个字符，/admin/g?t.jsp可以匹配/admin/get.jsp和/admin/got.jsp或是/admin/gxt.do。不能匹配/admin/xxx.jsp。
+	通配符：*
+	示例：/admin/*.jsp
+	匹配任意多个字符，但不能跨越目录。/*/index.jsp可以匹配/admin/index.jsp和/user/index.jsp，但是不能匹配/index.jsp和/user/test/index.jsp。
+	通配符：**
+	示例：/**/index.jsp
+	可以匹配任意多个字符，可以跨越目录，可以匹配/index.jsp，/admin/index.jsp，/user/admin/index.jsp和/a/b/c/d/index.jsp
+	47.2. RegexRequestMatcher
+	如果默认的AntPathRequestMatcher无法满足需求，还可以选择使用更强大的RegexRequestMatcher，它支持使用正则表达式对URL地址进行匹配。
+	如果希望使用RegexRequestMatcher，就需要在配置文件中添加如下配置：
+	<http auto-config='true' request-matcher="regex">
+	    <intercept-url pattern="^(/.*)*/admin\.jsp$" access="ROLE_ADMIN" />
+	    <intercept-url pattern="^/.*$" access="ROLE_USER" />
+	</http>
+	上面例子中就使用了正则表达式进行URL匹配，^/.*$与之前使用的/**意义相同，可以匹配任意一个请求。^(/.*)*/admin\.jsp$表示任意一个目录下的admin.jsp请求。
+	有关正则表达式的更多信息请去网上找一下吧，与它相关的资源太多了。
+	实例在ch215。
+		 -->
+		 
+    <bean id="channelDecisionManager" class="org.springframework.security.web.access.channel.ChannelDecisionManagerImpl">
+          <property name="channelProcessors">
+              <list>
+                  <ref bean="secureChannelProcessor"/>
+                  <ref bean="insecureChannelProcessor"/>
+              </list>
+          </property>
+    </bean>
+    
+    <!-- 
+     <bean id="secureChannelProcessor" class="org.springframework.security.web.access.channel.SecureChannelProcessor">
+    </bean>
+    <bean id="insecureChannelProcessor" class="org.springframework.security.web.access.channel.InsecureChannelProcessor">
+    </bean>
+    -->
+    
+    <bean id="secureChannelProcessor" class="org.springframework.security.web.access.channel.SecureChannelProcessor">
+    	  <property name="entryPoint" ref="httpsEntryPoint">
+          </property>
+    </bean>
+    <bean id="insecureChannelProcessor" class="org.springframework.security.web.access.channel.InsecureChannelProcessor">
+    	 <property name="entryPoint" ref="httpEntryPoint">
+          </property>
+    </bean>
+	<bean id="httpsEntryPoint" class="org.springframework.security.web.access.channel.RetryWithHttpsEntryPoint">
+		 <property name="portMapper" ref="portMapper1">
+          </property>
+	</bean>
+	<bean id="httpEntryPoint" class="org.springframework.security.web.access.channel.RetryWithHttpEntryPoint">
+		 <property name="portMapper" ref="portMapper1">
+          </property>
+	</bean>	
+	<bean id="portMapper1" class="org.springframework.security.web.PortMapperImpl">
+		<property name="portMappings">
+			<util:map map-class="java.util.HashMap">
+					<entry key="8088" value="8443" />
+					<!-- 182 portal-->
+					<entry key="80" value="9004" />
+			</util:map>
+		</property>
+	</bean>	
+	
+    
+    <bean id="filterInvocationSecurityMetadataSource"  class="com.bxtel.security4.access.intercept.JdbcFilterInvocationDefinitionSourceFactoryBean">
+	    <property name="dataSource" ref="dataSource"/>
+	    <property name="resourceQuery" value="
+	        select rp.privilegepath, rp.rolename
+			from BX_SYSTEM_PORTALRIVILEGE_T rp
+	    "/>
+	</bean>
+	
+	
+	<!-- 认证方式 -->
+    <bean id="myProviderManager"   class="com.bxtel.security4.authentication.ProviderManager">
+	   <property name="providers">
+		   	<list>
+		   		<ref bean="loginAuthenticationProvider" />
+		   	</list>
+	   </property>
+    </bean>
+   
+	
+		
+    
+	<bean id="captchaProducer" class="com.google.code.kaptcha.impl.DefaultKaptcha">
+		<property name="config">
+			<bean class="com.google.code.kaptcha.util.Config">
+				<constructor-arg>
+					<props>
+						<prop key="kaptcha.border">yes</prop>
+						<prop key="kaptcha.border.color">105,179,90</prop>
+						<prop key="kaptcha.textproducer.font.color">blue</prop>
+						<prop key="kaptcha.image.width">125</prop>
+						<prop key="kaptcha.image.height">45</prop>
+						<prop key="kaptcha.textproducer.font.size">45</prop>
+						<prop key="kaptcha.session.key">code</prop>
+						<prop key="kaptcha.textproducer.char.length">4</prop>
+						<prop key="kaptcha.textproducer.font.names">宋体,楷体,微软雅黑</prop>
+					</props>
+				</constructor-arg>
+			</bean>
+		</property>
+	</bean>
+	
+	
+
+	
+	<!-- Spring的生命周期（转） 
+	http://blog.csdn.net/liuxilil/article/details/4676088
+	ApplicationContextHolder  
+	 -->
+	<bean class="com.bxtel.util.SpringContextHolder" lazy-init="false" />
+	
+	
+    <bean id="myjdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate" >
+    	<property name="dataSource" ref="dataSource" />
+    </bean>
+    
+    <bean id="mynamedParameterJdbcTemplate"  class="org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate" >
+    	<constructor-arg  index="0" ref="dataSource"/>
+    </bean>
+    
+    <bean id="transactionManager" 	class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+    
+	<!--   测试模式用-->
+	
+	  <!-- 
+	<bean id="dataSourceSpied" class="org.apache.commons.dbcp.BasicDataSource"
+		destroy-method="close">
+		<property name="driverClassName">
+			<value>oracle.jdbc.OracleDriver</value>
+		</property>
+		<property name="url">
+			<value>jdbc:oracle:thin:@192.168.1.3:1521:hotel</value>
+		</property>
+		<property name="username">
+			<value>hotel</value>
+		</property>
+		<property name="password">
+			<value>hotel3</value>
+		</property>
+	</bean>
+	
+	<bean id="dataSource" class="net.sf.log4jdbc.Log4jdbcProxyDataSource">
+		<constructor-arg ref="dataSourceSpied" />
+		<property name="logFormatter">
+			<bean class="net.sf.log4jdbc.tools.Log4JdbcCustomFormatter">
+				<property name="loggingType" value="MULTI_LINE" />
+				<property name="margin" value="19" />
+				<property name="sqlPrefix" value="SQL:::" />
+			</bean>
+		</property>
+	</bean>
+	   -->
+	  
+	  
+	<bean id="dataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
+        <property name="jndiName">
+            <value>java:comp/env/jdbc/jk</value>
+        </property>
+    </bean>
+	
+	<!-- 
+	<bean id="dataSource1" class="org.springframework.jndi.JndiObjectFactoryBean">
+        <property name="jndiName">
+            <value>java:comp/env/jdbc/jk</value>
+        </property>
+    </bean>
+    
+	<bean id="dataSource2" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+		<property name="url" value="jdbc:log4jdbc:oracle:thin:@192.168.1.3:1521:hotel"/>
+		<property name="driverClassName" value="net.sf.log4jdbc.DriverSpy"/>
+		<property name="username" value="hotel"/>
+		<property name="password" value="hotel3"/>
+	</bean>
+
+	<bean id="dataSource3" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+		<property name="url" value="jdbc:oracle:thin:@119.254.84.182:1521:hotel"/>
+		<property name="driverClassName" value="oracle.jdbc.OracleDriver"/>
+		<property name="username" value="hotel"/>
+		<property name="password" value="hotel182"/>
+	</bean>
+	 
+	<util:map id="dataSources">
+		<entry key="0" value-ref="dataSource1"/>
+		<entry key="1" value-ref="dataSource2"/>
+		<entry key="2" value-ref="dataSource3"/>
+	</util:map>
+	
+	<bean id="dataSourceLookup" class="org.springframework.jdbc.datasource.lookup.MapDataSourceLookup">
+		<constructor-arg>
+			<ref bean="dataSources"/>
+		</constructor-arg>
+	</bean>
+	
+	<bean id="dataSource" class="com.bxtel.database.PrototypeLoadBalanceDataSource">
+        <property name="defaultTargetDataSource" ref="dataSource2"/>
+		<property name="targetDataSources" ref="dataSources"/>
+		<property name="dataSourceLookup" ref="dataSourceLookup"/>
+		<property name="dataSourceNumber" value="3"/>
+    </bean>
+      -->
+     
+	<bean id="nativeJdbcExtractor" class="org.springframework.jdbc.support.nativejdbc.CommonsDbcpNativeJdbcExtractor"/>
+	 
+	<bean id="oracleLobHandler" class="org.springframework.jdbc.support.lob.OracleLobHandler">
+	   <property name="nativeJdbcExtractor">
+	   <ref local="nativeJdbcExtractor"/>
+	   </property>
+	</bean>
+	
+	 <!-- 
+	<bean id="log4jdbcInterceptor" class="net.sf.log4jdbc.DataSourceSpyInterceptor" />  
+	<bean id="dataSourceLog4jdbcAutoProxyCreator" class="org.springframework.aop.framework.autoproxy.BeanNameAutoProxyCreator">  
+	   <property name="interceptorNames">  
+	       <list>
+	          <value>log4jdbcInterceptor</value>          
+	       </list>
+	   </property>  
+	   <property name="beanNames">  
+	       <list> 
+	          <value>dataSource</value>  
+	     </list>  
+	  </property>  
+	</bean>
+	 -->
+	 <!-- 
+	 
+	 
+	 
+	<aop:aspectj-autoproxy proxy-target-class="true"/>
+	
+    <aop:aspectj-autoproxy>  
+	    <aop:include name="com.googlecode.ehcache.annotations.aspectj.AnnotationEhCacheAspect"/> 
+    </aop:aspectj-autoproxy>
+    
+    <bean id="autoProxyCreator" class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator" >
+		<property name="proxyTargetClass" value="true"/>  
+	</bean> 
+    
+    -->
+    
+	<aop:aspectj-autoproxy  expose-proxy="true"  proxy-target-class="true" />
+   
+    
+    <!-- include advice and pointcut -->
+	<bean id="transactionInterceptor" class="org.springframework.transaction.interceptor.TransactionInterceptor">
+	  <property name="transactionManager">
+	    <ref bean="transactionManager"/> 
+	  </property>
+	  <property name="transactionAttributeSource">
+	    <ref bean="transactionAttributeSource"/>
+	  </property>
+	</bean>
+	
+	<!-- 
+	事务传播行为类型	说明
+	PROPAGATION_REQUIRED	如果当前没有事务，就新建一个事务，如果已经存在一个事务中，加入到这个事务中。这是最常见的选择。
+	PROPAGATION_SUPPORTS	支持当前事务，如果当前没有事务，就以非事务方式执行。
+	PROPAGATION_MANDATORY	使用当前的事务，如果当前没有事务，就抛出异常。
+	PROPAGATION_REQUIRES_NEW	新建事务，如果当前存在事务，把当前事务挂起。
+	PROPAGATION_NOT_SUPPORTED	以非事务方式执行操作，如果当前存在事务，就把当前事务挂起。
+	PROPAGATION_NEVER	以非事务方式执行，如果当前存在事务，则抛出异常。
+	PROPAGATION_NESTED	如果当前存在事务，则在嵌套事务内执行。如果当前没有事务，则执行与PROPAGATION_REQUIRED类似的操作。
+	 -->
+	<bean id="transactionAttributeSource" class="org.springframework.transaction.interceptor.NameMatchTransactionAttributeSource">
+	   <property name="properties">
+	     <props>
+	       <prop key="get*">PROPAGATION_REQUIRED,ISOLATION_READ_COMMITTED,-java.lang.Exception</prop>
+	       <prop key="del*">PROPAGATION_REQUIRED,ISOLATION_READ_COMMITTED,-java.lang.Exception</prop>
+	       <prop key="update*">PROPAGATION_REQUIRED,ISOLATION_READ_COMMITTED,-java.lang.Exception</prop>
+	       <prop key="add*">PROPAGATION_REQUIRED,ISOLATION_READ_COMMITTED,-java.lang.Exception</prop>
+	       <prop key="find*">PROPAGATION_REQUIRED,ISOLATION_READ_COMMITTED,-java.lang.Exception</prop>
+	       <prop key="get*">PROPAGATION_REQUIRED,ISOLATION_READ_COMMITTED,-java.lang.Exception</prop>
+	       <prop key="apply*">PROPAGATION_REQUIRED,ISOLATION_READ_COMMITTED,-java.lang.Exception</prop>
+	       <prop key="submit*">PROPAGATION_REQUIRED,ISOLATION_READ_COMMITTED,-java.lang.Exception</prop>
+	       <prop key="create*">PROPAGATION_REQUIRED,ISOLATION_READ_COMMITTED,-java.lang.Exception</prop>
+	       <prop key="do*">PROPAGATION_REQUIRED,ISOLATION_READ_COMMITTED,-java.lang.Exception</prop>
+	     </props>
+	   </property>
+	</bean>
+	
+	
+	<!-- 目标类 -->
+	<bean id="performancePointcut" class="org.springframework.aop.aspectj.AspectJExpressionPointcut">
+		<property name="expression" value="execution(* com.bxtel..bo.*.*(..) ) " />
+		<!-- 
+		<property name="expression" value="execution(* com.bxtel..bo.*.*(..) ) or execution(* com.bxtel..util.*.*(..) )" />
+		 -->
+	</bean>
+	
+	
+    <!-- 连接目标类和通知类 -->
+	<bean id="mytransactionAdvisor" class="org.springframework.aop.support.DefaultPointcutAdvisor">
+		<property name="advice" ref="transactionInterceptor" />
+		<property name="pointcut" ref="performancePointcut" />
+	</bean>
+
+
+
+  <!-- 性能监控配置-->
+  <bean id="myperformanceMonitorAdvisor" class="org.springframework.aop.support.DefaultPointcutAdvisor">
+		<property name="advice" ref="performanceMonitorInterceptor" />
+		<property name="pointcut" ref="performancePointcut" />
+  </bean>
+  <bean id="performanceMonitorInterceptor" class="com.bxtel.monitor.bo.MyPerformanceMonitorInterceptor" /> 
+
+
+
+
+  <bean id="validatorFactory" class="javax.validation.Validation"  factory-method="buildDefaultValidatorFactory" />
+  <bean id="validator"  		 class="javax.validation.Validator"   factory-bean="validatorFactory"  factory-method="getValidator" />
+
+  <!-- com.googlecode.ehcache.annotations.interceptor.EhCacheInterceptor -->
+  <ehcache:annotation-driven />
+  <ehcache:config cache-manager="cacheManager">    
+ 	<!-- interval is in minutes -->
+  	<ehcache:evict-expired-elements interval="60" />    
+  	<!-- 
+  	<ehcache:evict-expired-elements interval="20">       
+	  	<ehcache:exclude name="bucky"/>        
+	  	<ehcache:exclude pattern=".*badger$"/>   
+	  	<ehcache:include name="foo"/>        
+	  	<ehcache:include name="bar"/>        
+	  	<ehcache:include pattern="jpa\..*"/>
+  	</ehcache:evict-expired-elements>
+  	 -->
+  </ehcache:config>   
+  <bean id="cacheManager" class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean"> 
+  	 <property name="configLocation"  value="classpath:/ehcache.xml"/>
+  </bean>
+ 
+
+  <bean id="messageStoragebo" class="com.bxtel.ehcache.sample.storage.MemoryMessageStorageBoImpl" /> 
+	
+  <bean id="cacheMonitor"     class="com.bxtel.ehcache.sample.model.CacheMonitor" /> 
+	   <!--线程池   http://rainyear.iteye.com/blog/1466140
+	   ThreadPoolTaskExecutor的配置在网上找了很多解释没找到，看了下ThreadPoolExecutor的配置，名字差不多，应该含义也差不多。只不过ThreadPoolTaskExecutor对
+		 ThreadPoolExecutor做了包装。 
+		<bean id ="taskExecutor"  class ="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor" >
+		      <property name ="corePoolSize" value ="5" /> 
+		    <property name ="keepAliveSeconds" value ="300" /> 
+		    <property name ="maxPoolSize" value ="10" /> 
+		    <property name ="queueCapacity" value ="25" /> 
+		  </bean> 线程的配置文件： 
+		corePoolSize： 线程池维护线程的最少数量 
+		keepAliveSeconds  线程池维护线程所允许的空闲时间 
+		maxPoolSize   线程池维护线程的最大数量 
+		queueCapacity 线程池所使用的缓冲队列 
+		当一个任务通过execute(Runnable)方法欲添加到线程池时： 
+		l  如果此时线程池中的数量小于corePoolSize，即使线程池中的线程都处于空闲状态，也要创建新的线程来处理被添加的任务。 
+		l  如果此时线程池中的数量等于 corePoolSize，但是缓冲队列 workQueue未满，那么任务被放入缓冲队列。 
+		l  如果此时线程池中的数量大于corePoolSize，缓冲队列workQueue满，并且线程池中的数量小于maximumPoolSize，建新的线程来处理被添加的任务。
+		l  如果此时线程池中的数量大于corePoolSize，缓冲队列workQueue满，并且线程池中的数量等于maximumPoolSize，那么通过 handler所指定的策略来处理此任务。也就是：处理任务的优先级为：核心线程corePoolSize、任务队列workQueue、最大线程 maximumPoolSize，如果三者都满了，使用handler处理被拒绝的任务。
+		l  当线程池中的线程数量大于 corePoolSize时，如果某线程空闲时间超过keepAliveTime，线程将被终止。这样，线程池可以动态的调整池中的线程数。
+	  
+       <bean id="taskExecutor"  class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor">
+               <property name="corePoolSize" value="5" />
+               <property name="maxPoolSize" value="10" />
+               <property name="WaitForTasksToCompleteOnShutdown" value="true" />
+       </bean>
+	 -->
+	 
+	 
+		<!-- mail
+		http://gundumw100.iteye.com/blog/515346
+		http://www.cnblogs.com/codeplus/archive/2011/11/03/2232893.html
+		 -->
+	  <bean id="qqMailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
+	       <property name="host" value="smtp.qq.com"/>
+	       <property name="port" value="465"/>
+	       <property name="username" value="2540130725"/>
+	       <property name="password" value="491172625"/>
+	       <property name="defaultEncoding" value="UTF-8"></property>
+	       <property name="javaMailProperties">
+	             <props>
+	                <prop key="mail.smtp.auth">true</prop>
+	                <prop key="mail.smtp.timeout">25000</prop>
+	                <prop key="mail.smtp.starttls.enable">true</prop>
+	                <prop key="mail.smtp.socketFactory.class">javax.net.ssl.SSLSocketFactory</prop>
+	                <!-- 
+	                <prop key="mail.smtp.socketFactory.fallback">false</prop>
+	                -->
+	            </props>
+	       </property>
+	  </bean>
+	  
+	  
+	  <bean id="gmailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
+			<property name="host" value="smtp.gmail.com" />
+			<property name="port" value="587" />
+			<property name="username" value="qingtian881223" />
+			<property name="password" value="password" />
+			<property name="javaMailProperties">
+			   <props>
+		       	      <prop key="mail.smtp.auth">true</prop>
+		       	      <prop key="mail.smtp.starttls.enable">true</prop>
+		       	   </props>
+			</property>
+	 </bean>
+	  
+	  
+	 <bean id="wyMailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
+			<property name="host" value="smtp.163.com" />
+			<property name="username" value="491172625@163.com" />
+			<property name="password" value="dream1and" />
+			<property name="javaMailProperties">
+			   <props>
+		       	      <prop key="mail.smtp.auth">true</prop>
+		       	      <prop key="mail.smtp.starttls.enable">true</prop>
+		       	   </props>
+			</property>
+	 </bean>
+	  
+	  
+	   <!-- 
+	  <bean id="simpleMailMessage" class="org.springframework.mail.SimpleMailMessage" scope="singleton"> 
+	    <property name="from">
+	        <value>${mail.default.from}</value>
+	    </property>
+	  </bean>
+	 
+	 
+	  <bean id="velocityEngine" class="org.springframework.ui.velocity.VelocityEngineFactoryBean">
+	        <property name="velocityProperties">   
+	            <props>   
+	                <prop key="resource.loader">class</prop>   
+	                <prop key="class.resource.loader.class">org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader</prop>   
+	                <prop key="velocimacro.library"></prop>   
+	            </props>
+	        </property>
+	  </bean>
+	 
+	  <bean id="mailsenderService" class="com.bxtel.mail.MailSenderService">  
+		      <property name="mailSender" ref="qqMailSender" />
+		      <property name="simpleMailMessage" ref="simpleMailMessage" />
+		      <property name="velocityEngine" ref="velocityEngine" />
+	  </bean>
+	  
+	 -->
+
+
+	<!-- 异步线程池 -->
+<!-- 	<bean id="notifyTaskExecutor"
+		class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor"> 
+		<property name="corePoolSize" value="10" /> 
+		<property name="maxPoolSize" value="50" /> 
+		<property name="queueCapacity" value="1000" />
+		<property name="keepAliveSeconds" value="300" /> 
+		<property name="rejectedExecutionHandler">
+			<bean class="java.util.concurrent.ThreadPoolExecutor$CallerRunsPolicy" />
+		</property>
+	</bean>
+	 -->
+	
+	
+	<!-- 
+	<bean name="quartzScheduler" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+        <property name="dataSource" ref ="dataSource" />       
+        <property name="applicationContextSchedulerContextKey" value="applicationContextKey"/>
+        <property name="configLocation" value="classpath:quartz.properties"/>
+    </bean>
+	  -->
+	 
+	 
+	 
+	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver"/> 
+	
+	<bean id="payOrderInfoExctractorManager" class="com.bxtel.bxpay.bo.PayOrderInfoExctractorManager">
+	       <property name="extractorlist">
+			   	<list>
+			   		<ref bean="memberShipBOImpl" />
+			   		<ref bean="BxOrderHotelTBO" />
+			   		<ref bean="BxCashbackAuditTBO" />
+			   	</list>
+	   		</property>
+	</bean>
+	
+	 
+	 <!-- jmx -->
+	<bean id="exporter" class="org.springframework.jmx.export.MBeanExporter"
+		depends-on="mbeanServer">
+		<property name="beans">
+			<map>
+				<entry key="CONFIG.SHIRDRN.ORG:name=config" value-ref="config" />
+				<entry key="MX4J.SOURCEFORGE.COM:name=httpAdaptor" value-ref="httpAdaptor" />
+				<!--
+				<entry key="jdmk.sun.com:name=adaptorServer" value-ref="adaptorServer" />
+				-->
+			</map>
+		</property>
+		<property name="server" ref="mbeanServer" />
+		<property name="assembler">
+			<ref bean="assembler" />
+		</property>
+	</bean>
+	<bean id="assembler"
+		class="org.springframework.jmx.export.assembler.InterfaceBasedMBeanInfoAssembler">
+		<property name="managedInterfaces">
+			<list>
+				<value>com.bxtel.jmx.mx4j.SelectedMethodsInterface</value>
+			</list>
+		</property>
+	</bean>
+	<bean id="mbeanServer" class="org.springframework.jmx.support.MBeanServerFactoryBean" />
+	<bean id="httpAdaptor" class="mx4j.tools.adaptor.http.HttpAdaptor">
+		<property name="processor">
+			<ref bean="xsltProcessor" />
+		</property>
+		<property name="host">
+			<!-- http://192.168.1.126:9988 -->
+			<value>127.0.0.1</value>
+		</property>
+		<property name="port" value="9988" />
+	</bean>
+	<bean id="xsltProcessor" class="mx4j.tools.adaptor.http.XSLTProcessor" />
+	<bean id="config" class="com.bxtel.jmx.mx4j.MyConfiguration" />
+	
+	<bean id="debugInterceptor" class="org.springframework.aop.interceptor.DebugInterceptor" />
+	
+	
+	
+	<!-- 
+	<bean id="longtongdataTopic"  class="org.apache.activemq.command.ActiveMQTopic">
+      <constructor-arg value="longtongdata"/>
+   	</bean>
+   	 -->
+   	 
+   	 <!-- 
+   	 http://119.254.84.182:8161/admin/
+   	 admin/admin  
+   	 longtongdata destinationName
+   	  -->
+   	  
+   	
+   	<bean id="destination" class="org.apache.activemq.command.ActiveMQQueue">
+          <constructor-arg index="0" value="activeMQQueue" />
+    </bean>
+   	<bean id="topicSendConnectionFactory" class="org.apache.activemq.spring.ActiveMQConnectionFactory">
+		<property name="brokerURL" value="tcp://192.168.1.102:61616" />
+		<property name="useAsyncSend" value="true" />
+	</bean>
+	<bean id="topicSendJmsTemplate" class="org.springframework.jms.core.JmsTemplate">
+		<property name="connectionFactory" ref="topicSendConnectionFactory"></property>
+		<property name="pubSubDomain" value="true"/>
+	</bean>
+	<bean id="topicListenConnectionFactory" class="org.apache.activemq.spring.ActiveMQConnectionFactory">
+		<property name="brokerURL" value="tcp://192.168.1.102:61616" />
+	</bean>
+	<bean id="topicReciveJmsTemplate" class="org.springframework.jms.core.JmsTemplate">
+		<property name="connectionFactory" ref="topicListenConnectionFactory"></property>
+		<property name="pubSubDomain" value="true"/>
+	</bean>
+	<bean id="consumer"  class="org.springframework.jms.listener.DefaultMessageListenerContainer">  
+        <property name="connectionFactory" ref="topicListenConnectionFactory"/>  
+        <property name="messageListener"   ref="LongTengServiceBo" />  
+        <property name="destination"  ref="destination"></property>
+    </bean>  
+	
+	
+	
+	<!-- 
+	
+	<bean id="topicSendConnectionFactory" class="org.apache.activemq.spring.ActiveMQConnectionFactory">
+		<property name="brokerURL" value="tcp://192.168.1.115:61616" />
+		<property name="useAsyncSend" value="true" />
+	</bean>
+	<bean id="topicSendJmsTemplate" class="org.springframework.jms.core.JmsTemplate">
+		<property name="connectionFactory" ref="topicSendConnectionFactory"></property>
+		<property name="pubSubDomain" value="true"/>
+	</bean>
+	<bean id="topicListenConnectionFactory" class="org.apache.activemq.spring.ActiveMQConnectionFactory">
+		<property name="brokerURL" value="tcp://192.168.1.115:61616" />
+	</bean>
+	<bean id="topicReciveJmsTemplate" class="org.springframework.jms.core.JmsTemplate">
+		<property name="connectionFactory" ref="topicSendConnectionFactory"></property>
+		<property name="pubSubDomain" value="true"/>
+	</bean>
+	
+	
+	
+	
+	
+	<bean id="longtongdataTopic"  class="org.apache.activemq.command.ActiveMQTopic">
+      <constructor-arg value="longtongdata"/>
+   	</bean>
+   	<bean id="topicSendConnectionFactory" class="org.apache.activemq.spring.ActiveMQConnectionFactory">
+		<property name="brokerURL" value="tcp://127.0.0.1:61616" />
+		<property name="useAsyncSend" value="true" />
+	</bean>
+	<bean id="topicSendJmsTemplate" class="org.springframework.jms.core.JmsTemplate">
+		<property name="connectionFactory" ref="topicSendConnectionFactory"></property>
+		<property name="defaultDestination" ref="longtongdataTopic" />
+		<property name="pubSubDomain" value="true"/>
+	</bean>
+	<bean id="topicListenConnectionFactory" class="org.apache.activemq.spring.ActiveMQConnectionFactory">
+		<property name="brokerURL" value="tcp://127.0.0.1:61616" />
+	</bean>
+	
+	
+	
+	
+	第二种：PUB/SUB方式的配置 我们配置两个消息订阅者，分别订阅不同的消息，这样用于判断是否成功执行了消息的发布和消息的订阅
+	定义主题
+	<bean id="myTopic"  class="org.apache.activemq.command.ActiveMQTopic">
+      <constructor-arg value="normandy.topic"/>
+   	</bean>
+   	
+   	<bean id="myTopic2"  class="org.apache.activemq.command.ActiveMQTopic">
+      <constructor-arg value="normandy.topic2"/>
+   	</bean>
+   	
+   	消息转换器
+	<bean id="messageConvertForSys" class="com.bxtel.mail2.MessageConvertForSys"></bean>
+   	
+   	订单邮件消息转换器
+	<bean id="orderMailMessageConverter" class="com.bxtel.mail2.OrderMailMessageConverter"></bean>
+   	
+   	
+                   生产者                          
+    TOPIC链接工厂
+    <bean id="topicSendConnectionFactory" class="org.apache.activemq.spring.ActiveMQConnectionFactory">
+		<property name="brokerURL" value="tcp://127.0.0.1:61616" />
+		<property name="useAsyncSend" value="true" />
+	</bean>
+	
+   	TOPIC send jms模板
+	<bean id="topicSendJmsTemplate" class="org.springframework.jms.core.JmsTemplate">
+		<property name="connectionFactory" ref="topicSendConnectionFactory"></property>
+		<property name="defaultDestination" ref="myTopic" />
+		<property name="messageConverter" ref="orderMailMessageConverter" />
+		开启订阅模式
+		<property name="pubSubDomain" value="true"/>
+	</bean>
+	
+	消息发送方  无转换器 使用 org.springframework.jms.core.JmsTemplate的转换器
+		<bean id="topicMessageSender" class="com.bxtel.mail2.MessageSender">
+			<property name="jmsTemplate" ref="topicSendJmsTemplate"></property>
+		</bean>
+	
+	
+	可以指定主题
+	<bean id="orderMailMessageProducer" class="com.bxtel.mail2.OrderMailMessageProducer">
+       <property name="jmsTemplate" ref="topicSendJmsTemplate" />
+       <property name="notifyTopic" ref="myTopic" />
+    </bean>
+	
+
+ 	
+	
+	
+	             消费                    
+	<bean id="topicListenConnectionFactory" class="org.apache.activemq.spring.ActiveMQConnectionFactory">
+		<property name="brokerURL" value="tcp://127.0.0.1:61616" />
+	</bean>
+	
+	主题消息监听容器
+	<bean id="listenerContainer"    class="org.springframework.jms.listener.DefaultMessageListenerContainer">  
+        <property name="connectionFactory" ref="topicListenConnectionFactory" />  
+        <property name="pubSubDomain" value="true"/>default is false
+        <property name="destination" ref="myTopic" />  listen topic: myTopic
+        <property name="subscriptionDurable" value="true"/>
+        <property name="clientId" value="clientId_001"/>
+        <property name="messageListener" ref="topicMessageReceiver" />  
+        <property name="messageListener" ref="topicListenerA" />  
+    </bean>
+    
+    主题消息监听容器2
+    <bean id="listenerContainer2"  class="org.springframework.jms.listener.DefaultMessageListenerContainer">  
+        <property name="connectionFactory" ref="topicListenConnectionFactory" />  
+        <property name="pubSubDomain" value="true"/>default is false
+        <property name="destination" ref="myTopic2" />  listen topic: myTopic2
+        <property name="subscriptionDurable" value="true"/>
+        <property name="clientId" value="clientId_002"/>
+        
+        <property name="messageListener" ref="topicMessageReceiver" />  
+    	
+    	<property name="messageListener" ref="topicListenerA" />  
+    </bean>
+
+	消息接收方 未加上消息转换
+	<bean id="topicMessageReceiver" class="com.bxtel.mail2.MessageReceiver">
+	</bean>
+	
+	
+		
+	<bean id="topicListenerA" class="org.springframework.jms.listener.adapter.MessageListenerAdapter">
+		<constructor-arg ref="topicConsumerA" />
+		 may be other method
+		<property name="defaultListenerMethod" value="sendOrderMail" />
+		custom MessageConverter define
+		<property name="messageConverter" ref="orderMailMessageConverter" />
+	</bean>
+	<bean id="topicConsumerA" class="com.bxtel.mail2.OrderMailMessageConsumer">
+        <property name="jmstempMail" ref="jmstempMail" />
+        <property name="templateFileName"    value="order.ftl" />
+    </bean>
+    <bean id="jmstempMail" class="com.bxtel.mail.bo.JmsTemplateMail">
+        <property name="mailSender" ref="qqMailSender" />
+        <property name="freemarkerConfiguration" ref="freemarkerConfiguration"></property>
+    </bean>
+	<bean id="freemarkerConfiguration" class="org.springframework.ui.freemarker.FreeMarkerConfigurationFactoryBean">
+        <property name="templateLoaderPath" value="/WEB-INF/freemarker/"/>
+    </bean>
+ -->
+ 
+ 
+ 
+ 
+	<!--  
+	<bean id="analyzer" class="net.paoding.analysis.analyzer.PaodingAnalyzer">
+	</bean>
+	-->
+	
+	<!-- 
+	<bean id="analyzer" class="org.apache.lucene.analysis.cn.smart.SmartChineseAnalyzer">
+	  <constructor-arg value="LUCENE_46" />
+	</bean>
+	 -->
+	
+	<bean id="analyzer" class="com.chenlb.mmseg4j.analysis.MMSegAnalyzer">
+	</bean>
+	
+	<bean id="indexSwitchHotel" class="com.bxtel.search.IndexSwitch"> 
+  	 	<property name="analyzer"   ref="analyzer"/>
+  	 	<property name="basedir"   value="/searchhotelindex"/>
+    </bean>
+   
+    <bean id="indexSwitchEatery" class="com.bxtel.search.IndexSwitch"> 
+  	 	<property name="analyzer"   ref="analyzer"/>
+  	 	<property name="basedir"   value="/searcheateryindex"/>
+    </bean>
+   
+    
+	<!-- 
+	<bean id="luceneDirectoryHotel" class="org.apache.lucene.store.FSDirectory" factory-method="open">
+	  <constructor-arg>
+	    <bean class="java.io.File">
+	      <constructor-arg value="/searchhotelindex" />
+	    </bean>
+	  </constructor-arg>
+	  <constructor-arg>
+	    <bean class="org.apache.lucene.store.SimpleFSLockFactory" />
+	  </constructor-arg>
+	</bean>
+	<bean id="indexWriterHotel" class="com.bxtel.search.IndexWriterFactoryBean"> 
+  	 	<property name="analyzer"   ref="analyzer"/>
+  	 	<property name="directory"  ref="luceneDirectoryHotel"/>
+    </bean>
+    <bean id="luceneDirectoryEatery" class="org.apache.lucene.store.FSDirectory" factory-method="open">
+	  <constructor-arg>
+	    <bean class="java.io.File">
+	      <constructor-arg value="/searcheateryindex" />
+	    </bean>
+	  </constructor-arg>
+	  <constructor-arg>
+	    <bean class="org.apache.lucene.store.SimpleFSLockFactory" />
+	  </constructor-arg>
+	</bean>
+	<bean id="indexWriterEatery" class="com.bxtel.search.IndexWriterFactoryBean"> 
+  	 	<property name="analyzer"   ref="analyzer"/>
+  	 	<property name="directory"  ref="luceneDirectoryEatery"/>
+    </bean>
+     -->
+    
+    
+    
+    <!-- 
+    <bean id="directoryReader" class=" org.apache.lucene.index.DirectoryReader" factory-method="open">
+	  <constructor-arg  ref="luceneDirectory" />
+	</bean>
+	<bean id="indexSearcher" class="org.apache.lucene.search.IndexSearcher">
+	  <constructor-arg ref="directoryReader" />
+	</bean>
+	 -->
+	
+	
+	
+	
+	
+	
+	<!-- 
+	An instance of a DataProvider:
+     FileDataProvider recurses through a given directory and provides the DataConsumer
+     indexing requests built from the gathered files.
+     In the example, this provider needs to be started manually, and it is done via jmx.
+	
+	<bean id="dataprovider" class="proj.zoie.impl.indexing.FileDataProvider">
+	  <constructor-arg value="file:${source.directory}"/>
+	  <property name="dataConsumer" ref="indexingSystem" />
+	</bean>
+	
+	  an instance of an IndexableInterpreter:
+	  FileIndexableInterpreter converts a text file into a lucene document, for example
+	  purposes only
+	
+	<bean id="fileInterpreter" class="proj.zoie.impl.indexing.FileIndexableInterpreter" />
+	 
+	A decorator for an IndexReader instance:
+	     The default decorator is just a pass through, the input IndexReader is returned.
+	
+	<bean id="idxDecorator" class="proj.zoie.impl.indexing.DefaultIndexReaderDecorator" />
+	 
+	A zoie system declaration, passed as a DataConsumer to the DataProvider declared above
+	<bean id="indexingSystem" class="proj.zoie.impl.indexing.ZoieSystem" init-method="start" destroy-method="shutdown">
+	 
+	  disk index directory
+	  <constructor-arg index="0" value="file:${index.directory}"/>
+	 
+	  sets the interpreter
+	  <constructor-arg index="1" ref="fileInterpreter" />
+	 
+	  sets the decorator
+	  <constructor-arg index="2">
+	    <ref bean="idxDecorator"/>
+	  </constructor-arg>
+	 
+	  set the Analyzer, if null is passed, Lucene's StandardAnalyzer is used
+	  <constructor-arg index="3">
+	    <null/>
+	  </constructor-arg>
+	 
+	  sets the Similarity, if null is passed, Lucene's DefaultSimilarity is used
+	  <constructor-arg index="4">
+	    <null/>
+	  </constructor-arg>
+	 
+	  the following parameters indicate how often to triggered batched indexing,
+	       whichever the first of the following two event happens will triggered indexing
+	 
+	 
+	  Batch size: how many items to put on the queue before indexing is triggered
+	  <constructor-arg index="5" value="1000" />
+	 
+	  Batch delay, how long to wait before indxing is triggered
+	  <constructor-arg index="6" value="300000" />
+	 
+	  flag turning on/off real time indexing
+	  <constructor-arg index="7" value="true" />
+	</bean>
+	 
+	a search service
+	<bean id="mySearchService" class="com.mycompany.search.SearchService">
+	  IndexReader factory that produces index readers to build Searchers from
+	  <constructor-arg ref="indexingSystem" />
+	</bean>
+	 -->
+	
+	
+	
+	
+	
+		<!--   @Scheduled
+	<task:executor id="executor" pool-size="5" />  
+	<task:annotation-driven executor="executor" scheduler="scheduler" />  
+	fixed-rate="#{ T(java.lang.Long).MAX_VALUE }" 
+	 -->
+	 
+	 
+	
+	<bean id="systemconfig" class="com.bxtel.system.SystemConfig" > 
+	    <property name="projectName" value="portal" /> 
+	</bean>
+	
+	
+	
+	
+	
+	<bean id="oncestart" class="org.springframework.scheduling.support.PeriodicTrigger" > 
+  		<!--  Long.MAX_VALUE ms = 3E8 years; will run 5s after startup and not run again for 3E8 years --> 
+	    <constructor-arg name="period" value="#{ T(java.lang.Long).MAX_VALUE }" /> 
+	    <property name="initialDelay" value="5000" /> 
+	</bean> 
+	
+	
+	<task:scheduler id="scheduler" pool-size="20" />
+	<task:scheduled-tasks scheduler="scheduler"  >
+	 <!--
+	 
+				 <task:scheduled ref="CimTpcHtlInfoTBO"                     method="importHotel"                          cron="59 59 23 * * 5" />
+                 
+                 <task:scheduled ref="CimTpcHtlInfoTBO"                  method="synUpdateLowprice"                      fixed-delay="#{24*60*60*1000}" />
+                
+                 <task:scheduled ref="CimTpcHtlInfoTBO"                method="synUpdateRoom"                     fixed-delay="#{24*60*60*1000}" />
+               
+                 <task:scheduled ref="TongchengImp"                      method="insertSpecialprice"                      fixed-delay="#{24*60*60*1000}" />
+                 <task:scheduled ref="TongchengImp"                      method="inserthotelview"                      fixed-delay="#{3*24*60*60*1000}" />
+                 <task:scheduled ref="ShengJieServiceBo"                 method="FuzzyComparisonHotel"                 fixed-delay="#{24*60*60*1000}" />
+
+                 <task:scheduled ref="TongchengImp"         method="getShoppingOrderList"                                      fixed-delay="#{10*60*1000}" />
+                 <task:scheduled ref="TongchengImp"                      method="synMeituanData"                                 cron="59 59 23 * * 1-7"/>
+                 <task:scheduled ref="TongchengImp"                     method="dealHistoryRequest"                             cron="0/20 * * * * ?"/>
+                 <task:scheduled ref="TongchengImp"                     method="synMeituanOrder"                                cron="0 0/720 * * * ?"/>
+                 <task:scheduled ref="TongchengImp"                     method="synMeituanOrder"                                trigger="oncestart"/>
+		
+
+				 <task:scheduled ref="LongTengServiceBo"                     method="synHotelListLongTengJieLv"                               fixed-delay="#{24*60*60*1000}"/>
+				 <task:scheduled ref="XingHaiServiceBO"                		 method="synHotelListXinghai"                     				  fixed-delay="#{24*60*60*1000}" />
+				 <task:scheduled ref="ShengJieServiceBo"                     method="synHotelListShengJie"                     				  fixed-delay="#{24*60*60*1000}" />
+				 <task:scheduled ref="ZhongHangXinBO"                     	 method="synhotel"                     				              fixed-delay="#{24*60*60*1000}" />
+					 
+				
+				 <task:scheduled ref="TongchengImp"                     method="inserthotelview"                               fixed-delay="#{24*60*60*1000}"/>
+				 <task:scheduled ref="DaDuShiServiceBo"                method="dadushihotelchange"                      fixed-delay="#{10*60*1000}" />
+				 <task:scheduled ref="LongTengServiceBo"                     method="synHotelListLongTengJieLv"                               fixed-delay="#{24*60*60*1000}"/>
+				 
+				 <task:scheduled ref="LongTengServiceBo"                method="synHotelListLongTengJieLv"                      fixed-delay="#{24*60*60*1000}" />
+				
+				 <task:scheduled ref="ShengJieServiceBo"                method="FuzzyComparisonHotel"                      fixed-delay="#{24*60*60*1000}" />
+				
+				 <task:scheduled ref="DaDuShiServiceBo"                     method="syndadushibaseInfo"                               fixed-delay="#{24*60*60*1000}"/>
+				 
+				 <task:scheduled ref="ShengJieServiceBo"                     method="synHotelListShengJie"                     				  fixed-delay="#{24*60*60*1000}" />
+				
+			     <task:scheduled ref="BxDcRestaurantTBO"         method="initindex"                                      fixed-delay="#{24*60*60*1000}" />
+			     
+			     <task:scheduled ref="ShowCache"                         method="show"                                                 trigger="oncestart" />
+				
+			     <task:scheduled ref="BxSystemAccesslogTBO"  method="saveLogToDatabase"                           cron="0 */20 * * * ?"/>
+			     
+			     <task:scheduled ref="CimTpcHtlInfoTBO"                     	 method="syslist"                     				              fixed-delay="#{24*60*60*1000}" />
+				
+				<task:scheduled ref="CimTpcHtlInfoTBO"          		 method="initindex"                                            fixed-delay="#{24*60*60*1000}" />
+				
+				-->
+				 <task:scheduled ref="ShowCache"                         method="show"                                                 trigger="oncestart" />
+			     
+	</task:scheduled-tasks>
+	
+</beans>

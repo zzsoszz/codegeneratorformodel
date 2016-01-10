@@ -1,4 +1,4 @@
-package com.bxtel.system;
+package com.bxtel;
 
 import java.io.File;
 
@@ -9,6 +9,7 @@ import org.apache.catalina.LifecycleException;
 import org.apache.catalina.startup.Tomcat;
 import org.springframework.core.annotation.Order;
 import org.springframework.web.WebApplicationInitializer;
+import org.springframework.web.filter.DelegatingFilterProxy;
 
 
 /*
@@ -17,9 +18,10 @@ import org.springframework.web.WebApplicationInitializer;
       该类会调用所有org.springframework.web.WebApplicationInitializer的实现类的onStartup(ServletContext servletContext)方法，将相关的组件注册到服务器；
  */
 @Order(2)  
-public class SystemInitializer implements WebApplicationInitializer{
+public class MyWebApplicationInitializer implements WebApplicationInitializer{
 	@Override
 	public void onStartup(ServletContext servletContext) throws ServletException {
+		servletContext.addFilter("securityFilter",new DelegatingFilterProxy("springSecurityFilterChain")).addMappingForUrlPatterns(null, false, "/*");
 		System.out.println("aaaaaaaa:"+servletContext);
 	}
 }

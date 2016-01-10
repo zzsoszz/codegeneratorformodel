@@ -12,14 +12,6 @@
 	<packaging>jar</packaging>
 	<name>codegeneratorformodel</name>
 	<description>codegeneratorformodel</description>
-	<!-- 
-	<parent>
-		<groupId>org.springframework.boot</groupId>
-		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>1.2.6.RELEASE</version>
-		<relativePath/>
-	</parent>
-	 -->
 	<parent>
 	    <groupId>org.springframework.boot</groupId>
 	    <artifactId>spring-boot-starter-parent</artifactId>
@@ -28,9 +20,8 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<java.version>1.8</java.version>
+		<spring.version>4.2.3.RELEASE</spring.version>
 	</properties>
-
-
 	<repositories>
 		<!--  -->
 		<repository>
@@ -80,6 +71,15 @@
     </pluginRepositories>
     
 	<dependencies>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context-support</artifactId>
+		</dependency>
+<dependency>
+            <groupId>net.sf.ehcache</groupId>
+            <artifactId>ehcache</artifactId>
+            <version>2.8.3</version>
+       </dependency>
 	   <dependency>
 		<groupId>org.springframework</groupId>
 		<artifactId>spring-context</artifactId>
@@ -200,6 +200,7 @@
 		  <version>5.9.0</version>
 		</dependency>
 		 -->
+		 <!-- 
 		<dependency>
 			<groupId>org.apache.activemq</groupId>
 			<artifactId>activemq-core</artifactId>
@@ -211,7 +212,7 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-				
+		-->
 		
 		<dependency>
 		   <groupId>org.hibernate</groupId>
@@ -325,6 +326,7 @@
 			<artifactId>spring-boot-starter-jta-atomikos</artifactId>
 		</dependency>
 		-->
+		<!-- 
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-security</artifactId>
@@ -335,6 +337,7 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
+		 -->
 		<!-- 
 		<dependency>
 			<groupId>org.springframework.boot</groupId>

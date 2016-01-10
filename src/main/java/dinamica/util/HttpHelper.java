@@ -7,8 +7,6 @@ package dinamica.util;
  * http://hc.apache.org/httpcomponents-client-4.3.x/tutorial/html/connmgmt.html#d5e363
  */
 import java.io.File;
-
-
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -33,7 +31,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
@@ -50,8 +47,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.Consts;
 import org.apache.http.Header;
-import org.apache.http.HeaderElement;
-import org.apache.http.HeaderElementIterator;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpEntityEnclosingRequest;
 import org.apache.http.HttpHost;
@@ -74,12 +69,11 @@ import org.apache.http.config.ConnectionConfig;
 import org.apache.http.config.Registry;
 import org.apache.http.config.RegistryBuilder;
 import org.apache.http.conn.ConnectTimeoutException;
-import org.apache.http.conn.ConnectionKeepAliveStrategy;
-import org.apache.http.conn.HttpClientConnectionManager;
 import org.apache.http.conn.socket.ConnectionSocketFactory;
 import org.apache.http.conn.socket.PlainConnectionSocketFactory;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.conn.ssl.SSLContexts;
+import org.apache.http.conn.ssl.SSLSocketFactory;
 import org.apache.http.conn.ssl.X509HostnameVerifier;
 import org.apache.http.entity.InputStreamEntity;
 import org.apache.http.entity.StringEntity;
@@ -92,21 +86,19 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.message.BasicHeader;
-import org.apache.http.message.BasicHeaderElementIterator;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.util.EntityUtils;
 import org.apache.log4j.Logger;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import dinamica.guid.Guid;
 
 /*
  * HttpClient 4.3中Https的使用方法
  * http://www.nitrohsu.com/http-client-4-3-zhong-https-de-shi-yong-fang-fa.html
  */
+
 public class HttpHelper    
 {      
 
@@ -161,51 +153,18 @@ public class HttpHelper
 //		System.out.println(str.get("returnmsg"));
 //		System.out.println(str.get("data"));
 		
-		//http://www.eehuisdfsdfas.com/
-		//http://www.baiduxxx.com
 		
-//		
-//		HashMap aaa = HttpHelper.sendGet("https://ss0.bdstatic.com/5aV1bjqh_Q23odCf/static/superplus/js/lib/jquery-1.10.2_d88366fd.js","119.254.84.180",8777);
-//		System.out.println(aaa);
-//		
-//		
-//		HashMap bbb = HttpHelper.sendPost("https://ss0.bdstatic.com/5aV1bjqh_Q23odCf/static/superplus/js/lib/jquery-1.10.2_d88366fd.js", new HashMap(), "UTF-8", "119.254.84.180", 8777);
-//		System.out.println(bbb);
-//		
-		
-		
-		
-//		短信运营海艳 2015-9-15 16:27:59
-//		管理后台：http://www.ydqxt.com
-//		接口文档：http://www.ydqxt.com:8080/help.asp
-//
-//		用户名：AYH
-//		密码：888888
-//		扩展号：2132
-//		测试条数：20条（仅供接口测试使用）
-//		发送类型：行业应用
-//		发送要求：需提前报备签名，不报备人工审核，审核人员手动报备。
-//		你测试一下这个的响应速度呢
-		
-		
-		HashMap param = new HashMap();
-		param.put("username", "AYH");
-		param.put("password", "888888");
-		//param.put("passwordMd5", "");
-		param.put("mobile", "13730666347");
-		param.put("message", "【返利宝会员管家】验证码123456   发送时间："+DateHelper.getTimeString());
-		param.put("Ext", "2132");
-		HashMap bbb = HttpHelper.sendPost("http://211.151.85.133:8080/sendsms.asp",param , "GBK");
-		System.out.println(JsonHelper.getObjectMapperInstance().writeValueAsString(bbb));
-		//{"data":"272337380","returnmsg":"","returncode":"00000000","url":"http://211.151.85.133:8080/sendsms.asp"}
+		HashMap ss = HttpHelper.sendGet("http://www.baidu.com","119.254.84.180",8777);
+		System.out.println(ss);
 	}
+	
 	
 	
 	static CloseableHttpClient  httpClient;
 	static int connectTimeout=60000;
 	static int socketTimeout=60000;
-	org.apache.http.client.CookieStore cookieStore = new BasicCookieStore();
-	
+	  org.apache.http.client.CookieStore cookieStore = new BasicCookieStore();
+	    
 	static {
 		//http://hadoop.cf/visit-https-without-auth/
 		//http://blog.csdn.net/chaijunkun/article/details/40145685
@@ -250,40 +209,36 @@ public class HttpHelper
               }
           };
           
-//          
-//           
-//	       	
+          
 //          	KeyStore trustStore=CertHeper.readP12(WeiXinPayClient.class.getResource("apiclient_cert.p12").getPath(),Configure.mchID);
-//          	
-//            // Trust own CA and all self-signed certs
 //            SSLContext sslcontext = SSLContexts.custom()
 //                    .loadKeyMaterial(trustStore, Configure.mchID.toCharArray())
 //                    .build();
-//            
-//            // Allow TLSv1 protocol only
 //            SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(
 //                    sslcontext,
 //                    new String[] { "TLSv1" },
 //                    null,
 //                    SSLConnectionSocketFactory.BROWSER_COMPATIBLE_HOSTNAME_VERIFIER);
 //            
-          
+//            
 	       	socketFactoryRegistry = RegistryBuilder
 	                .<ConnectionSocketFactory> create()
 	                .register("http", PlainConnectionSocketFactory.INSTANCE)
+//	                .register("https", sslsf)
 	                .build();
-	                //.register("https", sslsf).build();
-	       	
 		}catch (Exception e) {
 			e.printStackTrace();
 		}
-       
-       
-       
         
 		PoolingHttpClientConnectionManager cm = new PoolingHttpClientConnectionManager(socketFactoryRegistry);
+		// Increase max total connection to 200
 		cm.setMaxTotal(200);
-		cm.setDefaultMaxPerRoute(20);
+		// Increase default max connection per route to 20
+//		cm.setDefaultMaxPerRoute(20);
+		// Increase max connections for localhost:80 to 50
+//		HttpHost localhost = new HttpHost("locahost", 80);
+//		cm.setMaxPerRoute(new HttpRoute(localhost), 50);
+		
 		
 		HttpRequestRetryHandler myRetryHandler = new HttpRequestRetryHandler() {
 		    public boolean retryRequest(
@@ -330,6 +285,33 @@ public class HttpHelper
 		
 		
 		
+//		// Create a local instance of cookie store
+//		CookieStore cookieStore = new BasicCookieStore();
+//		// Populate cookies if needed
+//		BasicClientCookie cookie = new BasicClientCookie("name", "value");
+//		cookie.setVersion(0);
+//		cookie.setDomain(".mycompany.com");
+//		cookie.setPath("/");
+//		cookieStore.addCookie(cookie);
+//		// Set the store
+//		CloseableHttpClient httpclient = HttpClients.custom()
+//		        .setDefaultCookieStore(cookieStore)
+//		        .build();
+//		
+		
+		
+//		
+//		MessageConstraints messageConstraints = MessageConstraints.custom()
+//	            .setMaxHeaderCount(200)
+//	            .setMaxLineLength(2000)
+//	            .build();
+//		
+		
+		
+		
+		
+        
+		
 		 ConnectionConfig connectionConfig = ConnectionConfig.custom()
 		            .setMalformedInputAction(CodingErrorAction.IGNORE)
 		            .setUnmappableInputAction(CodingErrorAction.IGNORE)
@@ -339,6 +321,41 @@ public class HttpHelper
 		 
 		 
 		 cm.setDefaultConnectionConfig(connectionConfig);
+		 
+//		 
+//		org.apache.http.client.config.RequestConfig;
+//		org.apache.http.config.ConnectionConfig;
+		 
+//		 
+//		 KeyStore myTrustStore =null;
+//		 SSLContext sslContext;
+//		 try {
+//			sslContext = SSLContexts.custom()
+//			         .useTLS()
+//			         .loadTrustMaterial(myTrustStore)
+//			         .build();
+//			 SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(sslContext);
+//			 Registry<ConnectionSocketFactory> r = RegistryBuilder.<ConnectionSocketFactory>create()
+//				        .register("http", plainsf)
+//				        .register("https", sslsf)
+//				        .build();
+//	 	 } catch (KeyManagementException e) {
+//			e.printStackTrace();
+//	  	 } catch (NoSuchAlgorithmException e) {
+//			e.printStackTrace();
+//		 } catch (KeyStoreException e) {
+//			e.printStackTrace();
+//		 }
+//		 
+		 
+//	      org.apache.http.client.CookieStore cookieStore = new BasicCookieStore();
+//        cookieStore.addCookie(new BasicClientCookie("BDUSS", "VpBeHNMMUVuQ0o3c2pXZ0tQYXB3SWpjTG1rZTVvQzZ3OHRaTHpDTkZVSm00RkpSQVFBQUFBJCQAAAAAAAAAAAEAAABtnVkYyvq-ocC0vdkAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAGZTK1FmUytRR"));
+//        cookieStore.addCookie(new BasicClientCookie("BAIDUID", "1BE2294325A5959BFC652195D4C6754F:FG=1"));
+//        cookieStore.addCookie(new BasicClientCookie("BAIDU_WISE_UID", "EAC7E7B67B6423D0053B993B87A7DC2A"));
+//        
+//		  HttpClientBuilder builder = HttpClients.custom().setDefaultCookieStore(cookieStore);
+		
+		 	
 		  
 			RequestConfig globalConfig = RequestConfig.custom()
 			        .setCookieSpec(CookieSpecs.BEST_MATCH)
@@ -348,45 +365,153 @@ public class HttpHelper
 			        .build();
 			
 			
+//			RequestConfig globalConfig = RequestConfig.custom()
+//			        .setCookieSpec(CookieSpecs.BEST_MATCH)
+//			        .build();
+//			CloseableHttpClient httpclient = HttpClients.custom()
+//			        .setDefaultRequestConfig(globalConfig)
+//			        .build();
+//			RequestConfig localConfig = RequestConfig.copy(globalConfig)
+//			        .setCookieSpec(CookieSpecs.BROWSER_COMPATIBILITY)
+//			        .build();
+//			HttpGet httpGet = new HttpGet("/");
+//			httpGet.setConfig(localConfig);
+			
+			
+			//HttpClientBuilder builder = HttpClients.custom().setDefaultRequestConfig(localConfig).setDefaultCookieStore(cookieStore);;
+			//HttpClientBuilder builder = HttpClients.custom().setDefaultRequestConfig(localConfig).setDefaultCookieStore(cookieStore);;
+			
+			HttpClientBuilder builder = HttpClients.custom().setDefaultRequestConfig(localConfig);//.setDefaultCookieStore(cookieStore);;
+			
+			
+//	httpClient = HttpAsyncClients.custom().build();
+//	CloseableHttpAsyncClient asyclient=HttpAsyncClients.custom().build();
+//		 CloseableHttpAsyncClient httpclient = HttpAsyncClients.createDefault();
+//	        try {
+//	            httpclient.start();
+//	            HttpGet request = new HttpGet("http://www.apache.org/");
+//	            Future<HttpResponse> future = httpclient.execute(request, null);
+//	            HttpResponse response = future.get();
+//	            System.out.println("Response: " + response.getStatusLine());
+//	            System.out.println("Shutting down");
+//	        } finally {
+//	            httpclient.close();
+//	        }
+//	        System.out.println("Done");
 		
-		//配置TOMCAT及httpClient的keepalive以高效利用长连接  
-		//http://backend.blog.163.com/blog/static/2022941262014029105618173/
-		ConnectionKeepAliveStrategy myStrategy = new ConnectionKeepAliveStrategy() {
-		    public long getKeepAliveDuration(HttpResponse response, HttpContext context) {
-		        // Honor 'keep-alive' header
-		        HeaderElementIterator it = new BasicHeaderElementIterator(response.headerIterator(HTTP.CONN_KEEP_ALIVE));
-		        while (it.hasNext()) {
-		            HeaderElement he = it.nextElement();
-		            String param = he.getName();
-		            String value = he.getValue();
-		            if (value != null && param.equalsIgnoreCase("timeout")) {
-		                try {
-		                    return Long.parseLong(value) * 1000;
-		                } catch(NumberFormatException ignore) {
+		
+		
+//		//ssl
+//	    KeyStore trustStore;
+//		try {
+//			trustStore = KeyStore.getInstance(KeyStore.getDefaultType());
+//			
+//			FileInputStream instream = new FileInputStream(new File("d:\\tomcat.keystore"));
+//			try {
+//				// 加载keyStore d:\\tomcat.keystore  
+//				trustStore.load(instream, "123456".toCharArray());
+//			} catch (CertificateException e) {
+//				e.printStackTrace();
+//			} catch (IOException e) {
+//				e.printStackTrace();
+//			} finally {
+//				try {
+//					instream.close();
+//				} catch (Exception ignore) {
+//				}
+//			}
+//			
+//			// 相信自己的CA和所有自签名的证书
+//			SSLContext sslcontext = SSLContexts.custom().loadTrustMaterial(trustStore, new TrustSelfSignedStrategy()).build();
+//			// 只允许使用TLSv1协议
+//			SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(sslcontext, new String[] { "TLSv1" }, null,SSLConnectionSocketFactory.BROWSER_COMPATIBLE_HOSTNAME_VERIFIER);
+//			builder.setSSLSocketFactory(sslsf);
+//		} catch (KeyStoreException e1) {
+//			e1.printStackTrace();
+//		} catch (KeyManagementException e) {
+//			e.printStackTrace();
+//		} catch (NoSuchAlgorithmException e) {
+//			e.printStackTrace();
+//		} catch (FileNotFoundException e) {
+//			e.printStackTrace();
+//		}
+		
+		
 
-		                }
-		            }
-		        }
-		        HttpHost target = (HttpHost) context.getAttribute( HttpClientContext.HTTP_TARGET_HOST);
-		        if ("www.naughty-server.com".equalsIgnoreCase(target.getHostName())) {
-		            // Keep alive for 5 seconds only
-		            return 5 * 1000;
-		        } else {
-		        	return 30 * 1000;
-		        }
-		    }
-		};
-		
-		
-		HttpClientBuilder builder = 
-				HttpClients.custom()
-				.setKeepAliveStrategy(myStrategy)
-				.setDefaultRequestConfig(localConfig);//.setDefaultCookieStore(cookieStore);;
+
+        
 		httpClient = builder.setConnectionManager(cm).setRetryHandler(myRetryHandler).build();
-
-		new IdleConnectionMonitorThread(cm).start();
+		
+		
+		
+//		@SuppressWarnings("deprecation")
+//		DefaultHttpClient httpclient = new DefaultHttpClient();
+//
+//		// 创建一个本地的cookie store实例
+//
+//		CookieStore cookieStore = new MyCookieStore();
+//
+//		// 如果需要填充cookie
+//
+//		BasicClientCookie cookie = new BasicClientCookie("name", "value");
+//
+//		cookie.setVersion(0);
+//
+//		cookie.setDomain(".mycompany.com");
+//
+//		cookie.setPath("/");
+//
+//		cookieStore.addCookie(cookie);
+//
+//		// 设置存储
+//
+//		httpclient.setCookieStore(cookieStore);
+//		
+		//new IdleConnectionMonitorThread(cm).start();
 	}
 	
+	
+	
+	
+//
+//	public static class IdleConnectionMonitorThread extends Thread {
+//	    
+//	    private final HttpClientConnectionManager connMgr;
+//	    private volatile boolean shutdown;
+//	    
+//	    public IdleConnectionMonitorThread(HttpClientConnectionManager connMgr) {
+//	        super();
+//	        this.connMgr = connMgr;
+//	    }
+//
+//	    @Override
+//	    public void run() {
+//	        try {
+//	            while (!shutdown) {
+//	                synchronized (this) {
+//	                    wait(5000);
+//	                    // Close expired connections
+//	                    connMgr.closeExpiredConnections();
+//	                    // Optionally, close connections
+//	                    // that have been idle longer than 30 sec
+//	                    connMgr.closeIdleConnections(30, TimeUnit.SECONDS);
+//	                }
+//	            }
+//	        } catch (InterruptedException ex) {
+//	            // terminate
+//	        }
+//	    }
+//	    
+//	    public void shutdown() {
+//	        shutdown = true;
+//	        synchronized (this) {
+//	            notifyAll();
+//	        }
+//	    }
+//	    
+//	}
+
+
 	
 	public static Map<String, String> getQueryMap(String query)
 	{
@@ -400,47 +525,45 @@ public class HttpHelper
 	    }
 	    return map;
 	}
-	
-	public static class IdleConnectionMonitorThread extends Thread {
-		// private final HttpClientConnectionManager  connMgr;
-	    private final PoolingHttpClientConnectionManager  connMgr;
-	    private volatile boolean shutdown=false;
-	    
-	    public IdleConnectionMonitorThread(PoolingHttpClientConnectionManager connMgr) {
-	        super();
-	        this.connMgr = connMgr;
-	    }
-	    
-	    @Override
-	    public void run() {
-	        try {
-	            while (!shutdown) {
-	                synchronized (this) {
-	                    wait(5000);
-	                    //Available Gets the number idle persistent connections.
-	                    //Leased Gets the number of persistent connections tracked by the connection manager currently being used to execute requests.
-	                    //Max   Gets the maximum number of allowed persistent connections.
-	                    //Pending  Gets the number of connection requests being blocked awaiting a free connection.
-	                    logger.debug("before Available:"+connMgr.getTotalStats().getAvailable()+" Leased:"+connMgr.getTotalStats().getLeased()+" Max:"+connMgr.getTotalStats().getMax()+" Pending:"+connMgr.getTotalStats().getPending());
-	                    //System.out.println("before Available:"+connMgr.getTotalStats().getAvailable()+" Leased:"+connMgr.getTotalStats().getLeased()+" Max:"+connMgr.getTotalStats().getMax()+" Pending:"+connMgr.getTotalStats().getPending());
-	                    connMgr.closeExpiredConnections();
-	                    connMgr.closeIdleConnections(1, TimeUnit.SECONDS);
-	                    logger.debug("after Available:"+connMgr.getTotalStats().getAvailable()+" Leased:"+connMgr.getTotalStats().getLeased()+" Max:"+connMgr.getTotalStats().getMax()+" Pending:"+connMgr.getTotalStats().getPending());
-	                    //System.out.println("after Available:"+connMgr.getTotalStats().getAvailable()+" Leased:"+connMgr.getTotalStats().getLeased()+" Max:"+connMgr.getTotalStats().getMax()+" Pending:"+connMgr.getTotalStats().getPending());
-	                }
-	            }
-	        } catch (InterruptedException ex) {
-	        	ex.printStackTrace();
-	        }
-	    }
-	    public void shutdown() {
-	        shutdown = true;
-	        synchronized (this) {
-	            notifyAll();
-	        }
-	    }
-	}
-	
+//
+//	public static class IdleConnectionMonitorThread extends Thread {
+//	    
+//	    private final ClientConnectionManager connMgr;
+//	    private volatile boolean shutdown=false;
+//	    
+//	    public IdleConnectionMonitorThread(ClientConnectionManager connMgr) {
+//	        super();
+//	        this.connMgr = connMgr;
+//	    }
+//	
+//	    @Override
+//	    public void run() {
+//	        try {
+//	            while (!shutdown) {
+//	                synchronized (this) {
+//	                    wait(5000);
+//	                    ////logger.debug("关闭空闲http连接");
+//	                    // Close expired connections
+//	                    connMgr.closeExpiredConnections();
+//	                    // Optionally, close connections
+//	                    // that have been idle longer than 30 sec
+//	                    connMgr.closeIdleConnections(30, TimeUnit.SECONDS);
+//	                }
+//	            }
+//	        } catch (InterruptedException ex) {
+//	            // terminate
+//	        }
+//	    }
+//	    
+//	    public void shutdown() {
+//	        shutdown = true;
+//	        synchronized (this) {
+//	            notifyAll();
+//	        }
+//	    }
+//	    
+//	}
+//	
 	
 	/*
 	 * 
@@ -526,7 +649,6 @@ BTW,4.3版本不设置超时的话，一旦服务器没有响应，等待时间N
     	HashMap map=new HashMap();
     	HttpGet method=null;
     	CloseableHttpResponse response =null;
-    	InputStream is=null;
 		try{
 	        StringBuilder sb = new StringBuilder(path);   
 	        
@@ -574,36 +696,27 @@ BTW,4.3版本不设置超时的话，一旦服务器没有响应，等待时间N
 	    	//method.setConfig(requestConfig);
 			//WebClientDevWrapper.wrapClient(httpClient);
 	    	response= httpClient.execute( method, context);
-	    	
-	    	is = response.getEntity().getContent();
-	    	
 			if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
 				String dc  = Charset.defaultCharset().name();  
-				BufferedReader br = new BufferedReader(new UnicodeReader(is,enc));    
+				HttpEntity entity = response.getEntity();
+				BufferedReader br = new BufferedReader(new UnicodeReader(entity.getContent(),enc));    
 				String str = IOUtils.toString(br);
-				EntityUtils.consume(response.getEntity());
+				EntityUtils.consume(entity);
 				map.put("data", str);
 				map.put("returncode", "00000000");
 				return map;
 			} else {
-				method.abort();
 				map.put("returncode", "00000001");
-				map.put("returnmsg", new Integer(response.getStatusLine().getStatusCode()).toString());
+				map.put("returnmsg", ""+response.getStatusLine());
+				return map;
 			}
 		}catch(Exception ex)
 		{
+			ex.printStackTrace();
 			map.put("returncode", "00000001");
 			map.put("returnmsg", ex.getMessage());
 		}finally 
 		{
-			if(is!=null)
-			{
-				try {
-					is.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
 			if(method!=null )    
 			{
 				method.releaseConnection();    
@@ -703,7 +816,7 @@ BTW,4.3版本不设置超时的话，一旦服务器没有响应，等待时间N
     {
     	return sendPost(path,headers,is,null,0);
     }
-    public static HashMap sendPost(String path,Map<String, String> headers,InputStream isinput,String proxyhost,int proxyport)   
+    public static HashMap sendPost(String path,Map<String, String> headers,InputStream is,String proxyhost,int proxyport)   
     {
     	HashMap map=new HashMap();
     	map.put("returncode", "00000001");
@@ -712,10 +825,9 @@ BTW,4.3版本不设置超时的话，一旦服务器没有响应，等待时间N
         map.put("url", path);
         HttpPost method =null;
         CloseableHttpResponse response=null;
-        InputStream is=null;
         try 
 		{
-        	InputStreamEntity httpentity = new InputStreamEntity(isinput, isinput.available());  
+        	InputStreamEntity httpentity = new InputStreamEntity(is, is.available());  
 	        method = new HttpPost(path);
 	        if(headers.size()>0)
 	        {
@@ -742,35 +854,39 @@ BTW,4.3版本不设置超时的话，一旦服务器没有响应，等待时间N
 	        
 			WebClientDevWrapper.wrapClient(httpClient);
 			response = httpClient.execute( method, context);
-				
-			is= response.getEntity().getContent();
-			
-			if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-				String str = EntityUtils.toString(response.getEntity());
-				map.put("data", str);
-				map.put("returncode", "00000000");
-				return map;
-			}
-			else 
-			{
-				method.abort();
-				map.put("returncode", "00000001");
-				map.put("returnmsg", new Integer(response.getStatusLine().getStatusCode()).toString());
-			}
-		}catch(Exception ex)
-		{
-			map.put("returncode", "00000001");
-			map.put("returnmsg", ex.getMessage());
-		}finally 
-		{
-			if(is!=null)
-			{
-				try {
-					is.close();
-				}catch(IOException e) {
-					e.printStackTrace();
+			try{
+				if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+					String str = EntityUtils.toString(response.getEntity());
+					map.put("data", str);
+					map.put("returncode", "00000000");
+					return map;
+				} else {
+					map.put("returncode", "00000001");
+					map.put("returnmsg", new Integer(response.getStatusLine().getStatusCode()).toString() );
+					return map;
 				}
+			}catch(Exception ex)
+			{
+				map.put("returncode", "00000001");
+				map.put("returnmsg", ex.getMessage());
+			}finally 
+			{
+				if(null!= method)    
+				{
+					method.releaseConnection();    
+				}
+				response.close();
 			}
+			
+			
+		} catch (ClientProtocolException e) {
+			map.put("returnmsg", e.getMessage());
+			e.printStackTrace();
+		} catch (IOException e) {
+			map.put("returnmsg", e.getMessage());
+			e.printStackTrace();
+		} finally 
+		{
 			if(method !=null )    
 			{
 				method.releaseConnection();    
@@ -802,10 +918,10 @@ BTW,4.3版本不设置超时的话，一旦服务器没有响应，等待时间N
         map.put("data", "");
         map.put("url",path);
         
+        
         HttpPost method =null;
         CloseableHttpResponse response=null;
-        InputStream is=null;
-		try 
+        try 
 		{
 	        List<NameValuePair> formParams = new ArrayList<NameValuePair>();   
 	        if(params!=null)
@@ -861,33 +977,39 @@ BTW,4.3版本不设置超时的话，一旦服务器没有响应，等待时间N
 	        
 			WebClientDevWrapper.wrapClient(httpClient);
 			response = httpClient.execute( method, context);
-			
-			is=response.getEntity().getContent();
-			
-			if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-				String str = EntityUtils.toString(response.getEntity());
-				map.put("data", str);
-				map.put("returncode", "00000000");
-				return map;
-			} else {
-				method.abort();
+			try{
+				if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+					String str = EntityUtils.toString(response.getEntity());
+					map.put("data", str);
+					map.put("returncode", "00000000");
+					return map;
+				} else {
+					map.put("returncode", "00000001");
+					map.put("returnmsg", new Integer(response.getStatusLine().getStatusCode()).toString() );
+					return map;
+				}
+			}catch(Exception ex)
+			{
 				map.put("returncode", "00000001");
-				map.put("returnmsg", new Integer(response.getStatusLine().getStatusCode()).toString() );
+				map.put("returnmsg", ex.getMessage());
+			}finally 
+			{
+				if(null!= method)    
+				{
+					method.releaseConnection();    
+				}
+				response.close();
 			}
 			
-		} catch (Exception e) {
-			map.put("returncode", "00000001");
+			
+		} catch (ClientProtocolException e) {
 			map.put("returnmsg", e.getMessage());
+			e.printStackTrace();
+		} catch (IOException e) {
+			map.put("returnmsg", e.getMessage());
+			e.printStackTrace();
 		} finally 
 		{
-			if(is!=null)
-			{
-				try {
-					is.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
 			if(method !=null )    
 			{
 				method.releaseConnection();    
@@ -1045,7 +1167,6 @@ BTW,4.3版本不设置超时的话，一旦服务器没有响应，等待时间N
         map.put("data", "");
         HttpPost method =null;
         CloseableHttpResponse response=null;
-        InputStream is=null;
     	try 
 		{
 	        MultipartEntityBuilder builder = MultipartEntityBuilder.create();
@@ -1067,32 +1188,25 @@ BTW,4.3版本不设置超时的话，一旦服务器没有响应，等待时间N
 	    	method.setEntity(mentity); 
 			WebClientDevWrapper.wrapClient(httpClient);
 			response = httpClient.execute(method,context);
-			
-			is = response.getEntity().getContent();
-	    	
 			if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
 				String str = EntityUtils.toString(response.getEntity());
+//				//logger.debug("recivehttp:"+str);
 				map.put("data", str);
 				map.put("returncode", "00000000");
 				return map;
 			} else {
-				method.abort();
 				map.put("returncode", "00000001");
-				map.put("returnmsg", new Integer(response.getStatusLine().getStatusCode()).toString());
+				return map;
 			}
-		} catch (Exception e) {
-			map.put("returncode", "00000001");
+			
+		} catch (ClientProtocolException e) {
+			e.printStackTrace();
 			map.put("returnmsg", e.getMessage());
-		}finally 
+		} catch (IOException e) {
+			e.printStackTrace();
+			map.put("returnmsg", e.getMessage());
+		} finally 
 		{
-			if(is!=null)
-			{
-				try {
-					is.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
 			if(method !=null )    
 			{
 				method.releaseConnection();    
@@ -1114,6 +1228,7 @@ BTW,4.3版本不设置超时的话，一旦服务器没有响应，等待时间N
     	return sendPostForMultipart(path, params,"UTF-8");
     }
     
+    
 	
 	public static HashMap sendJson(String url,String json){
 		return sendJson(url,json,null,0);
@@ -1130,7 +1245,6 @@ BTW,4.3版本不设置超时的话，一旦服务器没有响应，等待时间N
 		method.setHeader("charset",HTTP.UTF_8);
 		//post.setHeader("Content-Type","application/json");
 		CloseableHttpResponse  response =null;
-		InputStream is=null;
 		try {
 			////logger.debug("json:"+json);
 			StringEntity s = new StringEntity(json.toString(),"UTF-8");
@@ -1154,35 +1268,23 @@ BTW,4.3版本不设置超时的话，一旦服务器没有响应，等待时间N
 //	    	context.setCookieStore(cookieStore);
 	    	
 	    	
-	    	response = httpClient.execute(method,context);
-	    	
-	    	is = response.getEntity().getContent();
-	    	
-			if(response.getStatusLine().getStatusCode() == HttpStatus.SC_OK){
-				String str = IOUtils.toString(new InputStreamReader(is, "UTF-8"));
+	    	HttpResponse res = httpClient.execute(method,context);
+			if(res.getStatusLine().getStatusCode() == HttpStatus.SC_OK){
+				String str = IOUtils.toString(new InputStreamReader(res.getEntity().getContent(), "UTF-8"));
 				////logger.debug("recivehttp:"+str);
 				map.put("data", str);
 				map.put("returncode", "00000000");
 			}
-			else
+			else 
 			{
-				method.abort();
 				map.put("returncode", "00000001");
-				map.put("returnmsg", new Integer(response.getStatusLine().getStatusCode()).toString());
+				map.put("returnmsg",res.getStatusLine().getStatusCode());
 			}
 		}  catch (Exception e) {
 			e.printStackTrace();
 			map.put("returnmsg", e.getMessage());
 		}finally 
 		{
-			if(is!=null)
-			{
-				try {
-					is.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
 			if(method !=null )    
 			{
 				method.releaseConnection();    
@@ -1219,7 +1321,6 @@ BTW,4.3版本不设置超时的话，一旦服务器没有响应，等待时间N
 		CloseableHttpResponse  response =null;
 		method.setHeader("Content-Type","application/json");
 		method.setHeader("charset",HTTP.UTF_8);
-		InputStream is=null;
 		try {
 			StringEntity s = new StringEntity(json.toString(),"UTF-8");
 			s.setContentEncoding("UTF-8");
@@ -1230,34 +1331,20 @@ BTW,4.3版本不设置超时的话，一旦服务器没有响应，等待时间N
 	    	RequestConfig requestConfig = RequestConfig.custom().setSocketTimeout(socketTimeout).setConnectTimeout(connectTimeout).build();
 	    	method.setConfig(requestConfig);
 			response= httpClient.execute(method,context);
-			
-			is= response.getEntity().getContent();
-	    	
 			if(response.getStatusLine().getStatusCode() == HttpStatus.SC_OK){
-				String str = IOUtils.toString(new InputStreamReader(is, "UTF-8"));
+				String str = IOUtils.toString(new InputStreamReader(response.getEntity().getContent(), "UTF-8"));
 				map.put("data", str);
 				map.put("returncode", "00000000");
 			}
-			else
+			else 
 			{
-				method.abort();
 				map.put("returncode", "00000001");
-				map.put("returnmsg", new Integer(response.getStatusLine().getStatusCode()).toString());
 			}
-			
-		}catch (Exception e) {
-			map.put("returncode", "00000001");
+		}  catch (IOException e) {
+			e.printStackTrace();
 			map.put("returnmsg", e.getMessage());
 		}finally 
 		{
-			if(is!=null)
-			{
-				try {
-					is.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
 			if(method !=null )    
 			{
 				method.releaseConnection();    
@@ -1318,6 +1405,7 @@ BTW,4.3版本不设置超时的话，一旦服务器没有响应，等待时间N
 //	
 	
 	public static HashMap sendXMl(String url,String xml){
+		//return sendXMl(url,xml,"119.254.84.180",8666);
 		return sendXMl(url,xml,null,0);
 	}
 	
@@ -1333,8 +1421,6 @@ BTW,4.3版本不设置超时的话，一旦服务器没有响应，等待时间N
 		method.setHeader("charset",HTTP.UTF_8);
 		//post.setHeader("Content-Type","application/json");
 		CloseableHttpResponse  response =null;
-		InputStream is = null;
-		
 		try {
 			////logger.debug("json:"+json);
 			StringEntity s = new StringEntity(xml.toString(),"UTF-8");
@@ -1360,32 +1446,21 @@ BTW,4.3版本不设置超时的话，一旦服务器没有响应，等待时间N
 	    	
 	    	response = httpClient.execute(method,context);
 	    	
-	    	is=response.getEntity().getContent();
-	    	
 			if(response.getStatusLine().getStatusCode() == HttpStatus.SC_OK){
-				String str = IOUtils.toString(new InputStreamReader(is, "UTF-8"));
+				String str = IOUtils.toString(new InputStreamReader(response.getEntity().getContent(), "UTF-8"));
 				map.put("data", str);
 				map.put("returncode", "00000000");
 			}
-			else
+			else 
 			{
-				method.abort();
-				map.put("returncode", "00000001");
-				map.put("returnmsg", new Integer(response.getStatusLine().getStatusCode()).toString());
+				map.put("returncode", response.getStatusLine().getStatusCode());
 			}
-		}catch (Exception e) {
+		}  catch (Exception e) {
+			e.printStackTrace();
 			map.put("returncode", "00000001");
 			map.put("returnmsg", e.getMessage());
 		}finally 
 		{
-			if(is!=null)
-			{
-				try {
-					is.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
 			if(method !=null )    
 			{
 				method.releaseConnection();    
@@ -1544,6 +1619,7 @@ BTW,4.3版本不设置超时的话，一旦服务器没有响应，等待时间N
 		    logger.debug("HTTP-request info end");
 		    
 		    
+		    
 		    logger.debug("HTTP-Header:start");
 			request.setCharacterEncoding(encode);
 			Enumeration headerNames = request.getHeaderNames();
@@ -1554,8 +1630,6 @@ BTW,4.3版本不设置超时的话，一旦服务器没有响应，等待时间N
 				logger.debug("HeaderName:"+headerName+"   HeaderValue:"+headerValues);
 			}
 			logger.debug("HTTP-Header:end");
-			
-			
 			
 			logger.debug("HTTP-Body:start");
 			Enumeration paramNames = request.getParameterNames();
@@ -1704,10 +1778,12 @@ BTW,4.3版本不设置超时的话，一旦服务器没有响应，等待时间N
 		return sb.toString();
 	}
 	
+	
 	public static  String getHTTPJSONString(HttpServletRequest request) throws Exception
 	{
 		return getHTTPJSONString(request,"UTF-8");
 	}
+	
 	
 	public static  String getHTTPJSONString(HttpServletRequest request,String ecode) throws Exception
 	{
@@ -1735,9 +1811,6 @@ BTW,4.3版本不设置超时的话，一旦服务器没有响应，等待时间N
 		String param=om.writeValueAsString(params);
 		return param;
 	}
-	
-	
-	
 	
 	public static void printHTTP(HttpServletRequest request,Logger log) throws UnsupportedEncodingException{
 		log.error("HTTP-Header:start");
@@ -1768,6 +1841,11 @@ BTW,4.3版本不设置超时的话，一旦服务器没有响应，等待时间N
 	}
 	
 	public static  String genToken(HttpServletRequest request) {
+//		 try {
+//			printHTTP(request);
+//		} catch (UnsupportedEncodingException e) {
+//			e.printStackTrace();
+//		}
 		 String token=Guid.genRandom(20);
 	   	 request.getSession().getServletContext().setAttribute("token",token);
 	   	 return token;
@@ -1791,7 +1869,46 @@ BTW,4.3版本不设置超时的话，一旦服务器没有响应，等待时间N
 		return false;
 	}
 	
-	   
+	
+	static String[] mobileAgents = { "iphone", "android", "phone", "mobile", "wap", "netfront", "java", "opera mobi",
+			"opera mini", "ucweb", "windows ce", "symbian", "series", "webos", "sony", "blackberry", "dopod",
+			"nokia", "samsung", "palmsource", "xda", "pieplus", "meizu", "midp", "cldc", "motorola", "foma",
+			"docomo", "up.browser", "up.link", "blazer", "helio", "hosin", "huawei", "novarra", "coolpad", "webos",
+			"techfaith", "palmsource", "alcatel", "amoi", "ktouch", "nexian", "ericsson", "philips", "sagem",
+			"wellcom", "bunjalloo", "maui", "smartphone", "iemobile", "spice", "bird", "zte-", "longcos",
+			"pantech", "gionee", "portalmmm", "jig browser", "hiptop", "benq", "haier", "^lct", "320x320",
+			"240x320", "176x220", "w3c ", "acs-", "alav", "alca", "amoi", "audi", "avan", "benq", "bird", "blac",
+			"blaz", "brew", "cell", "cldc", "cmd-", "dang", "doco", "eric", "hipt", "inno", "ipaq", "java", "jigs",
+			"kddi", "keji", "leno", "lg-c", "lg-d", "lg-g", "lge-", "maui", "maxo", "midp", "mits", "mmef", "mobi",
+			"mot-", "moto", "mwbp", "nec-", "newt", "noki", "oper", "palm", "pana", "pant", "phil", "play", "port",
+			"prox", "qwap", "sage", "sams", "sany", "sch-", "sec-", "send", "seri", "sgh-", "shar", "sie-", "siem",
+			"smal", "smar", "sony", "sph-", "symb", "t-mo", "teli", "tim-", "tosh", "tsm-", "upg1", "upsi", "vk-v",
+			"voda", "wap-", "wapa", "wapi", "wapp", "wapr", "webc", "winw", "winw", "xda", "xda-",
+			"Googlebot-Mobile" };
+	//http://www.aiisen.com/java-judge-is-moblie-zh.html
+	public static boolean judgeIsMoblie(HttpServletRequest request) {
+		boolean isMoblie = false;
+		if (request.getHeader("User-Agent") != null) {
+			for (String mobileAgent : mobileAgents) {
+				if (request.getHeader("User-Agent").toLowerCase().indexOf(mobileAgent) >= 0) {
+					isMoblie = true;
+					break;
+				}
+			}
+		}
+		return isMoblie;
+	}
+	
+	public static boolean judgeIsWeiXin(HttpServletRequest request) {
+		boolean isweixin = false;
+		if (request.getHeader("User-Agent") != null) {
+			if (request.getHeader("User-Agent").toLowerCase().indexOf("micromessenger") >= 0) {
+				isweixin = true;
+			}
+		}
+		return isweixin;
+	}
+	
 	public static String saveHttp(HttpServletRequest request)
 	{
 		try {
@@ -1884,4 +2001,626 @@ BTW,4.3版本不设置超时的话，一旦服务器没有响应，等待时间N
 		}
 		return null;
 	}
+	
+	
+}  
+
+//org.springframework.mobile.device.LiteDeviceResolver
+//private static final String[] KNOWN_MOBILE_USER_AGENT_PREFIXES = new String[] {
+//	"w3c ", "w3c-", "acs-", "alav", "alca", "amoi", "audi", "avan", "benq",
+//	"bird", "blac", "blaz", "brew", "cell", "cldc", "cmd-", "dang", "doco",
+//	"eric", "hipt", "htc_", "inno", "ipaq", "ipod", "jigs", "kddi", "keji",
+//	"leno", "lg-c", "lg-d", "lg-g", "lge-", "lg/u", "maui", "maxo", "midp",
+//	"mits", "mmef", "mobi", "mot-", "moto", "mwbp", "nec-", "newt", "noki",
+//	"palm", "pana", "pant", "phil", "play", "port", "prox", "qwap", "sage",
+//	"sams", "sany", "sch-", "sec-", "send", "seri", "sgh-", "shar", "sie-",
+//	"siem", "smal", "smar", "sony", "sph-", "symb", "t-mo", "teli", "tim-",
+//	"tosh", "tsm-", "upg1", "upsi", "vk-v", "voda", "wap-", "wapa", "wapi",
+//	"wapp", "wapr", "webc", "winw", "winw", "xda ", "xda-" };
+//
+//private static final String[] KNOWN_MOBILE_USER_AGENT_KEYWORDS = new String[] {
+//	"blackberry", "webos", "ipod", "lge vx", "midp", "maemo", "mmp", "mobile",
+//	"netfront", "hiptop", "nintendo DS", "novarra", "openweb", "opera mobi",
+//	"opera mini", "palm", "psp", "phone", "smartphone", "symbian", "up.browser",
+//	"up.link", "wap", "windows ce" };
+//
+//private static final String[] KNOWN_TABLET_USER_AGENT_KEYWORDS = new String[] {
+//	"ipad", "playbook", "hp-tablet", "kindle" };
+//
+
+
+
+
+
+
+//User Agent Detection Libraries
+//
+//This is a list of User Agent detection libraries to be tested for compatibility with Firefox OS and Firefox for Android. This may also include general purpose JS libraries that include some kind of UA detection. 
+//
+//The end goal is to contact these sites or (even better, in the case of open source libraries) provide patches so our mobile browsers are correctly identified as mobile (and not served desktop content or blocked outright). 
+//
+//NOTE: This page won't be actively updated anymore. You can watch the meta bug, or track progress at https://github.com/miketaylr/arewedetectableyet/. 
+//
+//
+//UA strings to test with: 
+//
+//Firefox Mobile for Android: 
+//Mozilla/5.0 (Android; Mobile; rv:24.0) Gecko/24.0 Firefox/24.0 
+//
+//Firefox OS phones: 
+//Mozilla/5.0 (Mobile; rv:18.0) Gecko/18.0 Firefox/18.0 
+//
+//Firefox OS tablets: 
+//Mozilla/5.0 (Tablet; rv:29.0) Gecko/29.0 Firefox/29.0 
+//
+//Some known Firefox OS UA strings with device ids (found in bugzil.la/873385): 
+//Mozilla/5.0 (Mobile; ZTEOPEN; rv:18.1) Gecko/18.1 Firefox/18.1 
+//Mozilla/5.0 (Mobile; HUAWEIY300-F1; rv:18.1) Gecko/18.1 Firefox/18.1 
+//Mozilla/5.0 (Mobile; LG-D300; rv:18.1) Gecko/18.1 Firefox/18.1 
+//Mozilla/5.0 (Mobile; ALCATELOneTouch4012X; rv:18.1) Gecko/18.1 Firefox/18.1 
+//
+//See also https://developer.mozilla.org/en-US/docs/Gecko_user_agent_string_reference#Firefox_OS_version_number. 
+//
+//Libraries to be tested
+//
+//JavaScript
+// Dojo Toolkit https://github.com/dojo/ (see http://dojotoolkit.org/reference-guide/1.7/quickstart/browser-sniffing.html)  Do we need to recommend a ffos or fxos token be added to the module? https://github.com/dojo/dojo/blob/master/sniff.js 
+//
+//
+//Server Modules
+// NetBiscuits http://www.netbiscuits.com/ (in contact via email.) 
+//
+//Tested, issues reported in Bugzilla
+//
+//Meta Bug: 915706 
+//
+//Libraries known to be compatibile
+//
+//Go
+// UserAgent https://github.com/mssola/user_agent 
+//
+//Java
+// UADetector https://github.com/before/uadetector 
+// User Agent Utils 915727 * 
+//
+//JavaScript
+// Detect.js https://github.com/darcyclarke/Detect.js 
+// Detectizr Bug 956998 * 
+// Device.js 915853 * 
+// Express Device https://npmjs.org/package/express-device 
+// isMobile https://github.com/kaimallea/isMobile 
+// is-mobile Bug 914231 * 
+// JS Redirection Mobile Bug 932458* 
+// jQuery Mobile 
+// Mobile Agent https://github.com/fabdrol/mobileagent 
+// Mootools (https://github.com/mootools/mootools-core/blob/master/Source/Browser/Browser.js) 
+// Node User Agent Parse https://github.com/jujhars13/node-user-agent-parse 
+// Platform.js Bug 913633 
+// ua-parser-js https://github.com/faisalman/ua-parser-js 
+// useragent https://github.com/3rd-Eden/useragent 
+// Woothee Bug 914313 * 
+// YUI - http://yuilibrary.com/yui/docs/yui/yui-ua.html 
+// UA.js Bug 913189 * 
+//
+//Multiple Languages
+// ua-parser (multiple languages) https://github.com/tobie/ua-parser 
+// Mobile ESP http://blog.mobileesp.com/  Some ports of this are compatible, in contact with maintainer via email. 
+//
+// detectmobilebrowsers.com Bug 914241* 
+//
+//Perl
+// HTTP::BrowserDetect https://github.com/oalders/http-browserdetect 
+//
+//PHP
+// Categorizr https://github.com/bjankord/Categorizr (Note: no longer maintained) 
+// Detector (Drupal) https://drupal.org/project/detector / http://detector.dmolsen.com/ 
+// Mobile-Detect https://github.com/serbanghita/Mobile-Detect / http://mobiledetect.net/ / http://code.google.com/p/php-mobile-detect/ 
+// Mobile Detect Bundle https://github.com/suncat2000/MobileDetectBundle 
+// PHP User Agent https://github.com/ornicar/php-user-agent 
+// PHP User Agent Parser https://github.com/donatj/PhpUserAgent 
+// WordPress Mobile Detect http://wordpress.org/plugins/wp-mobile-detect/ 
+// WPTouch (WordPress) Bug 909420 
+//
+//Python
+// Django Mobile https://github.com/gregmuellegger/django-mobile 
+// GoMobile (Plone) https://pypi.python.org/pypi/gomobile.mobile 
+// minidetector https://github.com/saschwarz/minidetector/network 
+// Python User Agents https://github.com/selwin/python-user-agents 
+//
+//Ruby
+// agent_orange https://github.com/kevinelliott/agent_orange 
+// browser https://github.com/fnando/browser 
+// Mobvious https://github.com/jistr/mobvious (uses MobileESP (ruby port is at least compatible) 
+// UserAgent https://github.com/josh/useragent (makes no mobile/non-mobile distinction) 
+// User Agent Parser https://github.com/toolmantim/user_agent_parser 
+//
+//Server Detection Frameworks
+// Apache Mobile Filter 916250 
+// 51 Degrees http://51degrees.mobi/Products/DeviceDetection.aspx 
+// Detect Right http://detectright.com/ 
+// DeviceAtlas https://deviceatlas.com/device-data/user-agent-tester 
+//http://handsetdetection.com Bug 957205 
+// OpenDDR http://openddr.org/ 
+// WURFL (1.4) http://tools.scientiamobile.com/?user-agent-string=Mozilla%2F5.0+%28Mobile%3B+rv%3A18.0%29+Gecko%2F18.0+Firefox%2F18.0 
+//
+//	 
+
+/*
+ * package com.test;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.security.KeyManagementException;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.net.ssl.SSLContext;
+
+import org.apache.http.HttpEntity;
+import org.apache.http.NameValuePair;
+import org.apache.http.ParseException;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
+import org.apache.http.conn.ssl.SSLContexts;
+import org.apache.http.conn.ssl.TrustSelfSignedStrategy;
+import org.apache.http.entity.ContentType;
+import org.apache.http.entity.mime.MultipartEntityBuilder;
+import org.apache.http.entity.mime.content.FileBody;
+import org.apache.http.entity.mime.content.StringBody;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.util.EntityUtils;
+import org.junit.Test;
+
+public class HttpClientTest {
+
+	@Test
+	public void jUnitTest() {
+		get();
+	}
+	public void ssl() {
+		CloseableHttpClient httpclient = null;
+		try {
+			KeyStore trustStore = KeyStore.getInstance(KeyStore.getDefaultType());
+			FileInputStream instream = new FileInputStream(new File("d:\\tomcat.keystore"));
+			try {
+				// 加载keyStore d:\\tomcat.keystore  
+				trustStore.load(instream, "123456".toCharArray());
+			} catch (CertificateException e) {
+				e.printStackTrace();
+			} finally {
+				try {
+					instream.close();
+				} catch (Exception ignore) {
+				}
+			}
+			// 相信自己的CA和所有自签名的证书
+			SSLContext sslcontext = SSLContexts.custom().loadTrustMaterial(trustStore, new TrustSelfSignedStrategy()).build();
+			// 只允许使用TLSv1协议
+			SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(sslcontext, new String[] { "TLSv1" }, null,
+					SSLConnectionSocketFactory.BROWSER_COMPATIBLE_HOSTNAME_VERIFIER);
+			httpclient = HttpClients.custom().setSSLSocketFactory(sslsf).build();
+			// 创建http请求(get方式)
+			HttpGet httpget = new HttpGet("https://localhost:8443/myDemo/Ajax/serivceJ.action");
+			//logger.debug("executing request" + httpget.getRequestLine());
+			CloseableHttpResponse response = httpclient.execute(httpget);
+			try {
+				HttpEntity entity = response.getEntity();
+				//logger.debug("----------------------------------------");
+				//logger.debug(response.getStatusLine());
+				if (entity != null) {
+					//logger.debug("Response content length: " + entity.getContentLength());
+					//logger.debug(EntityUtils.toString(entity));
+					EntityUtils.consume(entity);
+				}
+			} finally {
+				response.close();
+			}
+		} catch (ParseException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (KeyManagementException e) {
+			e.printStackTrace();
+		} catch (NoSuchAlgorithmException e) {
+			e.printStackTrace();
+		} catch (KeyStoreException e) {
+			e.printStackTrace();
+		} finally {
+			if (httpclient != null) {
+				try {
+					httpclient.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+	}
+
+	public void postForm() {
+		// 创建默认的httpClient实例.  
+		CloseableHttpClient httpclient = HttpClients.createDefault();
+		// 创建httppost  
+		HttpPost httppost = new HttpPost("http://localhost:8080/myDemo/Ajax/serivceJ.action");
+		// 创建参数队列  
+		List<namevaluepair> formparams = new ArrayList<namevaluepair>();
+		formparams.add(new BasicNameValuePair("username", "admin"));
+		formparams.add(new BasicNameValuePair("password", "123456"));
+		UrlEncodedFormEntity uefEntity;
+		try {
+			uefEntity = new UrlEncodedFormEntity(formparams, "UTF-8");
+			httppost.setEntity(uefEntity);
+			//logger.debug("executing request " + httppost.getURI());
+			CloseableHttpResponse response = httpclient.execute(httppost);
+			try {
+				HttpEntity entity = response.getEntity();
+				if (entity != null) {
+					//logger.debug("--------------------------------------");
+					//logger.debug("Response content: " + EntityUtils.toString(entity, "UTF-8"));
+					//logger.debug("--------------------------------------");
+				}
+			} finally {
+				response.close();
+			}
+		} catch (ClientProtocolException e) {
+			e.printStackTrace();
+		} catch (UnsupportedEncodingException e1) {
+			e1.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			// 关闭连接,释放资源  
+			try {
+				httpclient.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
+	public void post() {
+		// 创建默认的httpClient实例.  
+		CloseableHttpClient httpclient = HttpClients.createDefault();
+		// 创建httppost  
+		HttpPost httppost = new HttpPost("http://localhost:8080/myDemo/Ajax/serivceJ.action");
+		// 创建参数队列  
+		List<namevaluepair> formparams = new ArrayList<namevaluepair>();
+		formparams.add(new BasicNameValuePair("type", "house"));
+		UrlEncodedFormEntity uefEntity;
+		try {
+			uefEntity = new UrlEncodedFormEntity(formparams, "UTF-8");
+			httppost.setEntity(uefEntity);
+			//logger.debug("executing request " + httppost.getURI());
+			CloseableHttpResponse response = httpclient.execute(httppost);
+			try {
+				HttpEntity entity = response.getEntity();
+				if (entity != null) {
+					//logger.debug("--------------------------------------");
+					//logger.debug("Response content: " + EntityUtils.toString(entity, "UTF-8"));
+					//logger.debug("--------------------------------------");
+				}
+			} finally {
+				response.close();
+			}
+		} catch (ClientProtocolException e) {
+			e.printStackTrace();
+		} catch (UnsupportedEncodingException e1) {
+			e1.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			// 关闭连接,释放资源  
+			try {
+				httpclient.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
+
+	public void get() {
+		CloseableHttpClient httpclient = HttpClients.createDefault();
+		try {
+			// 创建httpget.  
+			HttpGet httpget = new HttpGet("http://www.baidu.com/");
+			//logger.debug("executing request " + httpget.getURI());
+			// 执行get请求.  
+			CloseableHttpResponse response = httpclient.execute(httpget);
+			try {
+				// 获取响应实体  
+				HttpEntity entity = response.getEntity();
+				//logger.debug("--------------------------------------");
+				// 打印响应状态  
+				//logger.debug(response.getStatusLine());
+				if (entity != null) {
+					// 打印响应内容长度  
+					//logger.debug("Response content length: " + entity.getContentLength());
+					// 打印响应内容  
+					//logger.debug("Response content: " + EntityUtils.toString(entity));
+				}
+				//logger.debug("------------------------------------");
+			} finally {
+				response.close();
+			}
+		} catch (ClientProtocolException e) {
+			e.printStackTrace();
+		} catch (ParseException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			// 关闭连接,释放资源  
+			try {
+				httpclient.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
+	public void upload() {
+		CloseableHttpClient httpclient = HttpClients.createDefault();
+		try {
+			HttpPost httppost = new HttpPost("http://localhost:8080/myDemo/Ajax/serivceFile.action");
+
+			FileBody bin = new FileBody(new File("F:\\image\\sendpix0.jpg"));
+			StringBody comment = new StringBody("A binary file of some kind", ContentType.TEXT_PLAIN);
+
+			HttpEntity reqEntity = MultipartEntityBuilder.create().addPart("bin", bin).addPart("comment", comment).build();
+
+			httppost.setEntity(reqEntity);
+
+			//logger.debug("executing request " + httppost.getRequestLine());
+			CloseableHttpResponse response = httpclient.execute(httppost);
+			try {
+				//logger.debug("----------------------------------------");
+				//logger.debug(response.getStatusLine());
+				HttpEntity resEntity = response.getEntity();
+				if (resEntity != null) {
+					//logger.debug("Response content length: " + resEntity.getContentLength());
+				}
+				EntityUtils.consume(resEntity);
+			} finally {
+				response.close();
+			}
+		} catch (ClientProtocolException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				httpclient.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+	}
 }
+
+
+
+import java.util.concurrent.CountDownLatch;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.config.RequestConfig;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.concurrent.FutureCallback;
+import org.apache.http.impl.nio.client.CloseableHttpAsyncClient;
+import org.apache.http.impl.nio.client.HttpAsyncClients;
+public class AsyncClientHttpExchangeFutureCallback {
+    public static void main(final String[] args) throws Exception {
+        RequestConfig requestConfig = RequestConfig.custom()
+                .setSocketTimeout(3000).setConnectTimeout(3000).build();
+        CloseableHttpAsyncClient httpclient = HttpAsyncClients.custom()
+                .setDefaultRequestConfig(requestConfig).build();
+        try {
+            httpclient.start();
+            final HttpGet[] requests = new HttpGet[] {
+                    new HttpGet("http://www.apache.org/"),
+                    new HttpGet("https://www.verisign.com/"),
+                    new HttpGet("http://www.google.com/"),
+                    new HttpGet("http://www.baidu.com/") };
+            final CountDownLatch latch = new CountDownLatch(requests.length);
+            for (final HttpGet request : requests) {
+                httpclient.execute(request, new FutureCallback<httpresponse>() {
+                    //无论完成还是失败都调用countDown()
+                    @Override
+                    public void completed(final HttpResponse response) {
+                        latch.countDown();
+                        System.out.println(request.getRequestLine() + "->"
+                                + response.getStatusLine());
+                    }
+                    @Override
+                    public void failed(final Exception ex) {
+                        latch.countDown();
+                        System.out.println(request.getRequestLine() + "->" + ex);
+                    }
+                    @Override
+                    public void cancelled() {
+                        latch.countDown();
+                        System.out.println(request.getRequestLine()
+                                + " cancelled");
+                    }
+                });
+            }
+            latch.await();
+            System.out.println("Shutting down");
+        } finally {
+            httpclient.close();
+        }
+        System.out.println("Done");
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Chapter 3. HTTP state management
+Prev 	 	 Next
+Chapter 3. HTTP state management
+Originally HTTP was designed as a stateless, request / response oriented protocol that made no special provisions for stateful sessions spanning across several logically related request / response exchanges. As HTTP protocol grew in popularity and adoption more and more systems began to use it for applications it was never intended for, for instance as a transport for e-commerce applications. Thus, the support for state management became a necessity.
+Netscape Communications, at that time a leading developer of web client and server software, implemented support for HTTP state management in their products based on a proprietary specification. Later, Netscape tried to standardise the mechanism by publishing a specification draft. Those efforts contributed to the formal specification defined through the RFC standard track. However, state management in a significant number of applications is still largely based on the Netscape draft and is incompatible with the official specification. All major developers of web browsers felt compelled to retain compatibility with those applications greatly contributing to the fragmentation of standards compliance.
+3.1. HTTP cookies
+An HTTP cookie is a token or short packet of state information that the HTTP agent and the target server can exchange to maintain a session. Netscape engineers used to refer to it as a "magic cookie" and the name stuck.
+HttpClient uses the Cookie interface to represent an abstract cookie token. In its simplest form an HTTP cookie is merely a name / value pair. Usually an HTTP cookie also contains a number of attributes such as version, a domain for which is valid, a path that specifies the subset of URLs on the origin server to which this cookie applies, and the maximum period of time for which the cookie is valid.
+The SetCookie interface represents a Set-Cookie response header sent by the origin server to the HTTP agent in order to maintain a conversational state. The SetCookie2 interface extends SetCookie with Set-Cookie2 specific methods.
+The ClientCookie interface extends Cookie interface with additional client specific functionality such as the ability to retrieve original cookie attributes exactly as they were specified by the origin server. This is important for generating the Cookie header because some cookie specifications require that the Cookie header should include certain attributes only if they were specified in the Set-Cookie or Set-Cookie2 header.
+3.1.1. Cookie versions
+Cookies compatible with Netscape draft specification but non-compliant with the official specification are considered to be of version 0. Standard compliant cookies are expected to have version 1. HttpClient may handle cookies differently depending on the version.
+Here is an example of re-creating a Netscape cookie:
+BasicClientCookie netscapeCookie = new BasicClientCookie("name", "value");
+netscapeCookie.setVersion(0);
+netscapeCookie.setDomain(".mycompany.com");
+netscapeCookie.setPath("/");
+Here is an example of re-creating a standard cookie. Please note that standard compliant cookie must retain all attributes as sent by the origin server:
+BasicClientCookie stdCookie = new BasicClientCookie("name", "value");
+stdCookie.setVersion(1);
+stdCookie.setDomain(".mycompany.com");
+stdCookie.setPath("/");
+stdCookie.setSecure(true);
+// Set attributes EXACTLY as sent by the server 
+stdCookie.setAttribute(ClientCookie.VERSION_ATTR, "1");
+stdCookie.setAttribute(ClientCookie.DOMAIN_ATTR, ".mycompany.com");
+Here is an example of re-creating a Set-Cookie2 compliant cookie. Please note that standard compliant cookie must retain all attributes as sent by the origin server:
+BasicClientCookie2 stdCookie = new BasicClientCookie2("name", "value");
+stdCookie.setVersion(1);
+stdCookie.setDomain(".mycompany.com");
+stdCookie.setPorts(new int[] {80,8080});
+stdCookie.setPath("/");
+stdCookie.setSecure(true);
+// Set attributes EXACTLY as sent by the server 
+stdCookie.setAttribute(ClientCookie.VERSION_ATTR, "1");
+stdCookie.setAttribute(ClientCookie.DOMAIN_ATTR, ".mycompany.com");
+stdCookie.setAttribute(ClientCookie.PORT_ATTR, "80,8080");
+3.2. Cookie specifications
+The CookieSpec interface represents a cookie management specification. The cookie management specification is expected to enforce:
+rules of parsing Set-Cookie and optionally Set-Cookie2 headers.
+rules of validation of parsed cookies.
+formatting of Cookie header for a given host, port and path of origin.
+HttpClient ships with several CookieSpec implementations:
+Netscape draft:  This specification conforms to the original draft specification published by Netscape Communications. It should be avoided unless absolutely necessary for compatibility with legacy code.
+Standard:  RFC 2965 HTTP state management specification.
+Browser compatibility:  This implementation strives to closely mimic the (mis)behavior of common web browser applications such as Microsoft Internet Explorer and Mozilla FireFox.
+Best match:  'Meta' cookie specification that picks up a cookie policy based on the format of cookies sent with the HTTP response. It basically aggregates all above implementations into one class.
+Ignore cookies:  All cookies are ignored.
+It is strongly recommended to use the Best Match policy and let HttpClient pick up an appropriate compliance level at runtime based on the execution context.
+3.3. Choosing cookie policy
+Cookie policy can be set at the HTTP client and overridden on the HTTP request level if required.
+RequestConfig globalConfig = RequestConfig.custom()
+        .setCookieSpec(CookieSpecs.BEST_MATCH)
+        .build();
+CloseableHttpClient httpclient = HttpClients.custom()
+        .setDefaultRequestConfig(globalConfig)
+        .build();
+RequestConfig localConfig = RequestConfig.copy(globalConfig)
+        .setCookieSpec(CookieSpecs.BROWSER_COMPATIBILITY)
+        .build();
+HttpGet httpGet = new HttpGet("/");
+httpGet.setConfig(localConfig);
+3.4. Custom cookie policy
+In order to implement a custom cookie policy one should create a custom implementation of the CookieSpec interface, create a CookieSpecProvider implementation to create and initialize instances of the custom specification and register the factory with HttpClient. Once the custom specification has been registered, it can be activated the same way as a standard cookie specification.
+CookieSpecProvider easySpecProvider = new CookieSpecProvider() {
+
+    public CookieSpec create(HttpContext context) {
+
+        return new BrowserCompatSpec() {
+            @Override
+            public void validate(Cookie cookie, CookieOrigin origin)
+                    throws MalformedCookieException {
+                // Oh, I am easy
+            }
+        };
+    }
+
+};
+Registry<CookieSpecProvider> r = RegistryBuilder.<CookieSpecProvider>create()
+        .register(CookieSpecs.BEST_MATCH,
+            new BestMatchSpecFactory())
+        .register(CookieSpecs.BROWSER_COMPATIBILITY,
+            new BrowserCompatSpecFactory())
+        .register("easy", easySpecProvider)
+        .build();
+
+RequestConfig requestConfig = RequestConfig.custom()
+        .setCookieSpec("easy")
+        .build();
+
+CloseableHttpClient httpclient = HttpClients.custom()
+        .setDefaultCookieSpecRegistry(r)
+        .setDefaultRequestConfig(requestConfig)
+        .build();
+3.5. Cookie persistence
+HttpClient can work with any physical representation of a persistent cookie store that implements the CookieStore interface. The default CookieStore implementation called BasicCookieStore is a simple implementation backed by a java.util.ArrayList. Cookies stored in an BasicClientCookie object are lost when the container object get garbage collected. Users can provide more complex implementations if necessary.
+// Create a local instance of cookie store
+CookieStore cookieStore = new BasicCookieStore();
+// Populate cookies if needed
+BasicClientCookie cookie = new BasicClientCookie("name", "value");
+cookie.setVersion(0);
+cookie.setDomain(".mycompany.com");
+cookie.setPath("/");
+cookieStore.addCookie(cookie);
+// Set the store
+CloseableHttpClient httpclient = HttpClients.custom()
+        .setDefaultCookieStore(cookieStore)
+        .build();
+3.6. HTTP state management and execution context
+In the course of HTTP request execution HttpClient adds the following state management related objects to the execution context:
+Lookup instance representing the actual cookie specification registry. The value of this attribute set in the local context takes precedence over the default one.
+CookieSpec instance representing the actual cookie specification.
+CookieOrigin instance representing the actual details of the origin server.
+CookieStore instance representing the actual cookie store. The value of this attribute set in the local context takes precedence over the default one.
+The local HttpContext object can be used to customize the HTTP state management context prior to request execution, or to examine its state after the request has been executed. One can also use separate execution contexts in order to implement per user (or per thread) state management. A cookie specification registry and cookie store defined in the local context will take precedence over the default ones set at the HTTP client level
+CloseableHttpClient httpclient = <...>
+
+Lookup<CookieSpecProvider> cookieSpecReg = <...>
+CookieStore cookieStore = <...>
+
+HttpClientContext context = HttpClientContext.create();
+context.setCookieSpecRegistry(cookieSpecReg);
+context.setCookieStore(cookieStore);
+HttpGet httpget = new HttpGet("http://somehost/");
+CloseableHttpResponse response1 = httpclient.execute(httpget, context);
+<...>
+// Cookie origin details
+CookieOrigin cookieOrigin = context.getCookieOrigin();
+// Cookie spec used
+CookieSpec cookieSpec = context.getCookieSpec();
+
+
+
+
+HttpClient httpclient = new HttpClient();
+
+ //设置访问编码
+httpclient.getParams().setParameter(HttpMethodParams.HTTP_CONTENT_CHARSET, "UTF8");
+ //设置 HttpClient 接收 Cookie,用与浏览器一样的策略
+ httpclient.getParams().setCookiePolicy(CookiePolicy.BROWSER_COMPATIBILITY);
+ //让服务器知道访问源为浏览器 
+ httpclient.getParams().setParameter(HttpMethodParams.USER_AGENT, "Mozilla/5.0 (Windows NT 6.1; rv:8.0.1) Gecko/20100101 Firefox/8.0.1");
+
+
+
+ * 
+ */

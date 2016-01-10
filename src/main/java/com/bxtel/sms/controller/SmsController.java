@@ -1,7 +1,5 @@
 package com.bxtel.sms.controller;
 import com.bxtel.sms.bo.*;
-
-
 import com.bxtel.sms.model.*;
 import com.bxtel.commons.Request;
 import com.bxtel.commons.Response;
@@ -52,6 +50,7 @@ public class SmsController extends MultiActionController {
     	return bo.search(search,sort,page,pagesize);
 	}
     
+    
     @RequestMapping(value = "searchforjson")
     @ResponseBody
     public Response<Page<Sms>> searchforjson(@RequestBody Request<SearchData> req)  throws Exception, BusinessException {
@@ -62,12 +61,11 @@ public class SmsController extends MultiActionController {
         	resp.setData(page);
     	}catch(Exception ex)
 		{
-			resp.setReturncode("00000001");
+			resp.setReturncode("00000001"); 
 			resp.setReturnmsg("系统异常!");
 		}
     	return resp;
 	}
-    
     
 //    
 //    @RequestMapping

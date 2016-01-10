@@ -1,9 +1,11 @@
 package com.bxtel.commons;
 
 public class Response<T> {
-	String returncode;//00000000
-	String returnmsg;
+	
+	String returncode;//00000001  00000002 
+	String returnmsg;//
 	T data;
+	
 	public T getData() {
 		return data;
 	}
